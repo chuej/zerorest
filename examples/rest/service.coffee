@@ -9,6 +9,7 @@ startProvider = ()->
 
   users = zms.master("/users")
   users.use (req, res, next)->
+    return next null
     # /users specific middleware
   users.worker "/findById", (req, res, next)->
     id = req.params.id

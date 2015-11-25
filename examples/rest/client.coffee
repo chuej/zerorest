@@ -6,19 +6,12 @@ client.on 'error', (err) ->
   return
 # Streaming implementation
 res = client.request('/users/findById', {
-  ticker: 'AAPL'
-  startDay: '1'
-  startMonth: '6'
-  startYear: '2013'
-  endDay: '1'
-  endMonth: '6'
-  endYear: '2014'
-  freq: 'd'
+  params: {id: '1234'}
 }, timeout: 90000)
 body = ''
 res.on('data', (data) ->
   body += data
   return
 ).on 'end', ->
-  console.log "body:::", body
+  console.log "body:::", JSON.stringify(body, null, 2)
   return
