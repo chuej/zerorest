@@ -28,8 +28,8 @@ describe 'service provider', ()->
       it 'should create new master with given path', ()->
         assert.equal @master.path, @path
       it 'should create new master with @url, @before, and @after', ()->
-        assert.equal @master.before, @service.before
-        assert.equal @master.after, @service.after
+        assert.equal @master.before.length, @service.before.length
+        assert.equal @master.after.length, @service.after.length
         assert.equal @master.url, @service.url
       it 'should push master to @masters', ()->
         assert.equal @service.masters[0], @master

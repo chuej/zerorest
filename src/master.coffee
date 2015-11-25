@@ -5,6 +5,7 @@ class Master extends EventEmitter
   constructor: (opts)->
     @before = opts.before
     @after = opts.after
+    @localAfter = []
     @url = opts.url
     @path = opts.path
     @
@@ -13,7 +14,7 @@ class Master extends EventEmitter
     if @workers.length < 1
       @before.push fn
     else
-      @after.push fn
+      @localAfter.push fn
   worker: (path, fn)->
     @workers.push
       path: path
@@ -31,15 +32,16 @@ class Master extends EventEmitter
     _worker.on 'request', (inp, rep, opts)=>
       runBefore = async.applyEachSeries @before
       runAfter = async.applyEachSeries @after
+      runLocalAfter = async.applyEachSeries @localAfter
+
       handleError = (err)=>
-        runAfter err, inp, rep, (err)=>
-          @emit 'WorkerError', err
+        runLocalAfter err, inp, rep, (err)=>
+          runAfter err, inp, rep, (err)=>
+            @emit 'WorkerError', err
       runBefore inp, rep, (err)=>
         return handleError(err) if err
         worker.cb inp, rep, (err)=>
           return handleError(err) if err
-          async.applyEachSeries @after, err, inp, rep, (err)=>
-            @emit 'WorkerError', err if err
 
     _worker.start()
     return cb null

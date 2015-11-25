@@ -32,7 +32,7 @@ class Service extends EventEmitter
     opts =
       path: path
       url: @url
-      before: @before
+      before: @before.slice(0)
       after: @after
     master = new Master opts
     @masters.push master
