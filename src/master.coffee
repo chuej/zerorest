@@ -8,6 +8,7 @@ class Master extends EventEmitter
     @localAfter = []
     @url = opts.url
     @path = opts.path
+    @adapter = opts.adapter or 'rest'
     @
   workers: []
   use: (fn)->
@@ -30,7 +31,7 @@ class Master extends EventEmitter
     _worker.on 'error', (err)=>
       @emit 'WorkerError', err
     _worker.on 'request', (inp, rep, opts)=>
-      # run data adapter
+      require("./adapters/#{@adapter}") inp, rep, opts
       runBefore = async.applyEachSeries @before
       runAfter = async.applyEachSeries @after
       runLocalAfter = async.applyEachSeries @localAfter
