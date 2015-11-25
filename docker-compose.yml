@@ -1,0 +1,23 @@
+service:
+  build: "./"
+  environment:
+    ENV: development
+  volumes:
+    - ./src:/opt/app/src
+    - ./examples:/opt/app/examples
+    - ./package.json:/opt/app/package.json
+    # - ./piEx:/opt/app/piEx
+  command: ["./node_modules/.bin/coffee", "examples/rest/service.coffee"]
+  dns:
+    - 172.17.42.1
+    - 8.8.4.4
+    - 8.8.8.8
+client:
+  build: "./"
+  environment:
+    ENV: development
+  links:
+    - service
+  volumes:
+    - ./:/opt/app
+  command: ["./node_modules/.bin/coffee", "examples/rest/client.coffee"]

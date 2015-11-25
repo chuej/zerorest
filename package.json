@@ -1,0 +1,20 @@
+{
+  "name": "zeroms",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "test": "./node_modules/.bin/mocha --compilers coffee:coffee-script/register --recursive **/*test.coffee",
+    "exampleService": "./node_modules/.bin/coffee ./examples/rest/service.coffee",
+    "exampleClient": "./node_modules/.bin/coffee ./examples/rest/client.coffee"
+  },
+  "dependencies": {
+    "async": "^1.4.0",
+    "coffee-script": "^1.9.3",
+    "debug": "~2.2.0",
+    "lodash": "^3.10.0",
+    "pigato": "0.0.42"
+  },
+  "devDependencies": {
+    "mocha": "2.2.5"
+  }
+}
