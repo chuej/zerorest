@@ -19,20 +19,25 @@ class Master extends EventEmitter
     async.forEach @workers, @startWork
   startWork: (worker, cb)=>
     worker.fullPath = @path + worker.path
-    console.log "creating worker"
-    console.log "path: #{worker.fullPath}"
-    console.log "url: #{@url}"
+
     _worker = new Worker @url, worker.fullPath
     worker._worker = _worker
 
     _worker.on 'error', (err)=>
       @emit 'WorkerError', err
-    _worker.on 'request', (inp, rep, opts)->
-      # console.log inp, rep, opts
-      # console.log "request!!!!!!!!"
-      #compose before, worker.cb, and after
-      #call adapter w/ fns
-      rep.end inp
+    _worker.on 'request', (inp, rep, opts)=>
+      runBefore = async.applyEachSeries @before
+      runAfter = async.applyEachSeries @after
+      handleError = (err)=>
+        runAfter err, inp, rep, (err)=>
+          @emit 'WorkerError', err
+      runBefore inp, rep, (err)=>
+        return handleError(err) if err
+        worker.cb inp, rep, (err)=>
+          return handleError(err) if err
+          async.applyEachSeries @after, err, inp, rep, (err)=>
+            @emit 'WorkerError', err if err
+
     _worker.start()
     return cb null
 module.exports = Master
