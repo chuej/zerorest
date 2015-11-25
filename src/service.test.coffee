@@ -27,6 +27,8 @@ describe 'service provider', ()->
         assert.equal @master.before, @service.before
         assert.equal @master.after, @service.after
         assert.equal @master.url, @service.url
+      it 'should push master to @masters', ()->
+        assert.equal @service.masters[0], @master
     describe 'start', ()->
       it 'should start broker'
       it 'should start masters'
