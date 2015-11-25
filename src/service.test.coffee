@@ -30,5 +30,26 @@ describe 'service provider', ()->
       it 'should push master to @masters', ()->
         assert.equal @service.masters[0], @master
     describe 'start', ()->
-      it 'should start broker'
-      it 'should start masters'
+      before (done)->
+        @service.masters[0].start = ()=>
+          @masterStarted = true
+        @service.on 'brokerStart', ()=>
+          @brokerStarted = true
+          return done null
+        @service.start()
+      it 'should start broker', ()->
+        assert @brokerStarted
+      it 'should start masters', ()->
+        assert @masterStarted
+    describe 'stop', ()->
+      before (done)->
+        @service.masters[0].stop = ()=>
+          @masterStopped = true
+        @service.on 'brokerStop', ()=>
+          @brokerStopped = true
+          return done null
+        @service.stop()
+      it 'should start broker', ()->
+        assert @brokerStopped
+      it 'should start masters', ()->
+        assert @masterStopped

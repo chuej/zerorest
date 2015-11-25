@@ -1,15 +1,19 @@
 Master = require './master'
 assert = require 'assert'
-
+Broker = require('pigato').Broker
+Client = require('pigato').Client
 describe 'task master', ()->
   before ()->
     @before =[
-      ->
+      (req, res, next)->
+        return next null
     ]
     @after = [
-      ->
+      (req, res, next)->
+        return next null
     ]
     @url = "tcp://127.0.0.1:5555"
+    @workerPath = "/findById"
     @path = "/master"
     opts =
       before: @before
@@ -33,12 +37,25 @@ describe 'task master', ()->
     describe 'worker', ()->
       before ()->
         @cb = (req, res, next)->
-        @workerPath = "/findById"
+          res.end req
+
         @master.worker @workerPath, @cb
       it 'should push worker config to @workers', ()->
         assert.equal @master.workers.length, 1
         assert.equal @master.workers[0].path, @workerPath
         assert.equal @master.workers[0].cb, @cb
     describe 'start', ()->
-      it 'should create workers from worker config'
-      it 'should start workers'
+      before (done)->
+        conf =
+          onStart: ()=>
+            @master.start()
+        @broker = new Broker @url, conf
+        @broker.start()
+        @client = new Client @url
+        @client.start()
+        @client.on 'error', (err)->
+          throw err
+        @client.request "#{@path}#{@workerPath}", {args:'args'}, (->), (err, @data)=>
+          return done err
+      it 'should create workers from worker config', ()->
+        assert @data

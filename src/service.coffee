@@ -7,9 +7,13 @@ class Service extends EventEmitter
     @url = url
     brokerConf =
       onStart: ()=>
+        @emit 'brokerStart'
         @masters.forEach (master)->
           master.start()
-      onStop: ()->
+      onStop: ()=>
+        @emit 'brokerStop'
+        @masters.forEach (master)->
+          master.stop()
     @broker = new Broker @url, brokerConf
 
     @
@@ -29,4 +33,6 @@ class Service extends EventEmitter
     return master
   start: ()->
     @broker.start()
+  stop: ()->
+    @broker.stop()
 module.exports = Service
