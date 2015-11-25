@@ -28,7 +28,7 @@ class Master extends EventEmitter
     _worker.on 'error', (err)=>
       @emit 'WorkerError', err
     _worker.on 'request', (inp, rep, opts)->
-      console.log inq, rep, opts
+      console.log inp, rep, opts
       console.log "request!!!!!!!!"
       #compose before, worker.cb, and after
       #call adapter w/ fns

@@ -1,7 +1,7 @@
 ZMS = require '../../src/service'
 
 startProvider = ()->
-  zms = new ZMS("tcp://127.0.0.1:55555")
+  zms = new ZMS("tcp://0.0.0.0:55555")
 
   zms.use (req, res, next)->
     #middleware

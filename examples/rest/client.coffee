@@ -1,5 +1,5 @@
 PIGATO = require('pigato')
-client = new (PIGATO.Client)('tcp://127.0.0.1:55555')
+client = new (PIGATO.Client)('tcp://service:55555')
 client.start()
 client.on 'error', (err) ->
   console.log 'CLIENT ERROR', err
@@ -20,5 +20,5 @@ res.on('data', (data) ->
   body += data
   return
 ).on 'end', ->
-  console.log body
+  console.log "body:::", body
   return
