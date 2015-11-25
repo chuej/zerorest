@@ -1,6 +1,6 @@
 EventEmitter = require('events').EventEmitter
 Worker = require('pigato').Worker
-
+async = require 'async'
 class Master extends EventEmitter
   constructor: (opts)->
     @before = opts.before
@@ -16,8 +16,8 @@ class Master extends EventEmitter
       path: path
       cb: fn
   start: ()->
-    @workers.forEach @startWork
-  startWork: (worker)=>
+    async.forEach @workers, @startWork
+  startWork: (worker, cb)=>
     worker.fullPath = @path + worker.path
     console.log "creating worker"
     console.log "path: #{worker.fullPath}"
@@ -34,4 +34,5 @@ class Master extends EventEmitter
       #call adapter w/ fns
       rep.end inp
     _worker.start()
+    return cb null
 module.exports = Master

@@ -1,6 +1,7 @@
 EventEmitter = require('events').EventEmitter
 Master = require './master'
 Broker = require('pigato').Broker
+async = require 'async'
 
 class Service extends EventEmitter
   constructor: (url)->
@@ -8,12 +9,14 @@ class Service extends EventEmitter
     brokerConf =
       onStart: ()=>
         @emit 'brokerStart'
-        @masters.forEach (master)->
+        async.each @masters, (master, cb)->
           master.start()
+          return cb null
       onStop: ()=>
         @emit 'brokerStop'
-        @masters.forEach (master)->
+        async.each @masters, (master, cb)->
           master.stop()
+          return cb null
     @broker = new Broker @url, brokerConf
 
     @

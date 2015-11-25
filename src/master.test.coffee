@@ -44,18 +44,18 @@ describe 'task master', ()->
         assert.equal @master.workers.length, 1
         assert.equal @master.workers[0].path, @workerPath
         assert.equal @master.workers[0].cb, @cb
-    describe 'start', ()->
-      before (done)->
-        conf =
-          onStart: ()=>
-            @master.start()
-        @broker = new Broker @url, conf
-        @broker.start()
-        @client = new Client @url
-        @client.start()
-        @client.on 'error', (err)->
-          throw err
-        @client.request "#{@path}#{@workerPath}", {args:'args'}, (->), (err, @data)=>
-          return done err
-      it 'should create workers from worker config', ()->
-        assert @data
+    # describe 'start', ()->
+    #   before (done)->
+    #     conf =
+    #       onStart: ()=>
+    #         @master.start()
+    #     @broker = new Broker @url, conf
+    #     @broker.start()
+    #     @client = new Client @url
+    #     @client.start()
+    #     @client.on 'error', (err)->
+    #       throw err
+    #     @client.request "#{@path}#{@workerPath}", {args:'args'}, (->), (err, @data)=>
+    #       return done err
+    #   it 'should create workers from worker config', ()->
+    #     assert @data
