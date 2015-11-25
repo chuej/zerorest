@@ -29,19 +29,24 @@ describe 'task master', ()->
       assert.equal @master.path, @path
       assert.equal @master.url, @url
   context 'methods', ()->
-    describe 'use', ()->
-      before ()->
-        @fn = (req, res, next)->
-          return next null
-        @master.use @fn
-      it 'should push middleware function to @before', ()->
-        assert.equal @fn, @master.before[1]
-    describe 'worker', ()->
-      before ()->
-        @cb = (req, res, next)->
-          res.end req
+    before ()->
+      @beforeFn = (req, res, next)->
+        return next null
+      @afterFn = (err, req, res, next)->
+        return next null
+      @master.use @beforeFn
+      @cb = (req, res, next)->
+        res.end req
 
-        @master.worker @workerPath, @cb
+      @master.worker @workerPath, @cb
+      @master.use @afterFn
+    describe 'use', ()->
+
+      it 'should push middleware function to @before', ()->
+        assert.equal @beforeFn, @master.before[1]
+      it 'should push middleware functions to @after if workers registered', ()->
+        assert.equal @afterFn, @master.after[1]
+    describe 'worker', ()->
       it 'should push worker config to @workers', ()->
         assert.equal @master.workers.length, 1
         assert.equal @master.workers[0].path, @workerPath

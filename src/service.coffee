@@ -24,7 +24,10 @@ class Service extends EventEmitter
   after: []
   masters: []
   use: (fn)->
-    @before.push fn
+    if @masters.length < 1
+      @before.push fn
+    else
+      @after.push fn
   master: (path)->
     opts =
       path: path

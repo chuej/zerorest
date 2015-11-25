@@ -11,16 +11,20 @@ describe 'service provider', ()->
     it 'should create broker', ()->
       assert @service.broker?
   context 'methods', ()->
+    before ()->
+      @beforeFn = ->
+      @service.use @beforeFn
+      @path = "/master"
+      @master = @service.master @path
+      @afterFn = ->
+      @service.use @afterFn
     describe 'use', ()->
-      before ()->
-        @fn = ->
-        @service.use @fn
+
       it 'should push fn to @before', ()->
-        assert.equal @service.before[0], @fn
+        assert.equal @service.before[0], @beforeFn
+      it 'should push fn to @after if masters exist', ()->
+        assert.equal @service.after[0], @afterFn
     describe 'master', ()->
-      before ()->
-        @path = "/master"
-        @master = @service.master @path
       it 'should create new master with given path', ()->
         assert.equal @master.path, @path
       it 'should create new master with @url, @before, and @after', ()->
