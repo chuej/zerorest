@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "test": "./node_modules/.bin/mocha --compilers coffee:coffee-script/register --recursive **/*test.coffee",
+    "test": "./node_modules/.bin/mocha --compilers coffee:coffee-script/register --recursive **/**/*test.coffee",
     "exampleService": "./node_modules/.bin/coffee ./examples/rest/service.coffee",
     "exampleClient": "./node_modules/.bin/coffee ./examples/rest/client.coffee"
   },

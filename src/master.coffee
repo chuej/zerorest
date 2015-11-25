@@ -30,6 +30,7 @@ class Master extends EventEmitter
     _worker.on 'error', (err)=>
       @emit 'WorkerError', err
     _worker.on 'request', (inp, rep, opts)=>
+      # run data adapter
       runBefore = async.applyEachSeries @before
       runAfter = async.applyEachSeries @after
       runLocalAfter = async.applyEachSeries @localAfter

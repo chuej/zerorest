@@ -32,7 +32,7 @@ class Service extends EventEmitter
     opts =
       path: path
       url: @url
-      before: @before.slice(0)
+      before: @before.slice(0)  #allow for master-specific middleware
       after: @after
     master = new Master opts
     @masters.push master
