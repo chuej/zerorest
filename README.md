@@ -1,5 +1,8 @@
 # ZeroMS
-Build microservices with ZeroMQ
+Build microservices with ZeroMQ.
+
+Provides express-like API on top of 0mq REQ/REP sockets.
+
 ## Usage
 ```javascript
 var ZM, startService;
