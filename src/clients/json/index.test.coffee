@@ -1,6 +1,6 @@
 URL = "tcp://0.0.0.0:5678"
 assert = require 'assert'
-Client = require './client'
+Client = require './'
 
 
 describe 'zms client', ()->
