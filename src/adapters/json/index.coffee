@@ -11,6 +11,7 @@ module.exports = (req, res, opts)->
     res.end rep
 
   res.send = res.json
+  res.sendRaw = res.end
   res.setStatus = (newStatus)->
     status = newStatus
   res.setHeaders = (newHeaders)->

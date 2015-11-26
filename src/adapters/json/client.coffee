@@ -1,21 +1,22 @@
 PiClient = require('pigato').Client
+EventEmitter = require('events').EventEmitter
 
-class Client
+class Client extends EventEmitter
   constructor: (url)->
     @url = url
     @client = new PiClient @url
-    @client.start()
+    @client.start ()=>
+      @emit 'start'
 
+    @client.on 'error', (err)=>
+      @emit 'error', err
     @
   request: (path, args, next)->
     client = @client
-    client.on 'error', next
-    body =
-      params: args.params
-      headers: args.headers
-      body: args.body
+    copts = args.copts
+    delete args.copts
 
-    res = client.request path, body, args.copts
+    res = client.request path, args, copts
     if next?
       resBody = ''
       res.on 'data', (data)->
@@ -24,10 +25,8 @@ class Client
       .on 'end', ->
         try
           resBody = JSON.parse(resBody)
-          client.removeListener 'error', next
           return next null, resBody, resBody.body
         catch err
-          client.removeListener 'error', next
           return next err
     return res
 
