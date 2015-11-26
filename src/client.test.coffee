@@ -21,7 +21,8 @@ describe 'zms client', ()->
       return done err if err
       @body = @resp.body
       @client.request '/users/html', @opts, (err, @htmlResp)=>
-        return done err
+        @client.request '/users/error', @opts, (@err, @errResp)=>
+          return done err
   context 'callback mode', ()->
     it 'should have resp', ()->
       assert @resp
@@ -49,6 +50,9 @@ describe 'zms client', ()->
   context 'html request', ()->
     it 'should respond with raw text', ()->
       assert.equal @htmlResp, "<html></html>"
+  context 'error response', ()->
+    it 'should return with error from worker', ()->
+      assert.equal @err.message, "ERROR"
   after ()->
     @zms.stop()
     @client.stop()
@@ -72,6 +76,8 @@ startService = ->
         req: req
     users.worker "/html", (req, res, next)->
       res.send "<html></html>"
+    users.worker "/error", (req, res, next)->
+      res.error new Error 'ERROR'
     zms.start()
     return zms
   return startProvider()

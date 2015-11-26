@@ -1,5 +1,13 @@
 PiClient = require('pigato').Client
 EventEmitter = require('events').EventEmitter
+CError = (name, message, stack) ->
+  @name = name
+  @message = message
+  @stack = stack
+  return
+
+CError.prototype = Object.create(Error.prototype)
+CError::constructor = CError
 
 class Client extends EventEmitter
   constructor: (url)->
@@ -26,7 +34,10 @@ class Client extends EventEmitter
       .on 'end', ->
         try
           resBody = JSON.parse(resBody)
-          return next null, resBody
+          return next null, resBody unless resBody.error?
+          resErr = resBody.error
+          error = new CError resErr.name, resErr.message, resErr.stack
+          return next error, resBody
         catch err
           if typeof(resBody) is 'string'
             return next null, resBody

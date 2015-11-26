@@ -35,9 +35,10 @@ class Master extends EventEmitter
       rep.copts = opts
       rep.error = (err)->
         resp =
-          stack: err?.stack
-          message: err?.message
-          name: err?.name
+          error:
+            stack: err?.stack
+            message: err?.message
+            name: err?.name
         rep.end JSON.stringify(resp)
       runBefore = async.applyEachSeries @before
       runAfter = async.applyEachSeries @after

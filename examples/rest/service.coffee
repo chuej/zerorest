@@ -29,7 +29,8 @@ startProvider = ()->
   templates.worker "/html", (req, res, next)->
     res.send "<html></html>"
   zms.use (err, req, res, next)->
-    res.send "ERROR"
+    err.stack = null # hide stack
+    res.error err
     #error handler
     #calling next w/ err will trigger default res.error
   zms.start()

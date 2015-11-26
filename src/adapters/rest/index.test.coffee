@@ -39,3 +39,15 @@ describe 'rest adapter', ()->
         assert.equal args.headers['content-type'], 'application/json'
         return done null
       @res.json {}
+  context 'res.error', ()->
+    before (done)->
+      @res.end = (args)=>
+        @args = JSON.parse(args)
+        return done null
+      @res.error new Error("error!")
+    it 'should have error message', ()->
+      assert @args.error.message
+    it 'should have stack', ()->
+      assert @args.error.stack
+    it 'should have name', ()->
+      assert @args.error.name

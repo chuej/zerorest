@@ -90,5 +90,5 @@ describe 'task master', ()->
             return done null
         it 'should run @after', ()->
           assert @afterHit
-        it 'should run default err handler if res is not sent', ()->
-          assert.equal @errData.message, "ERROR!"
+        it 'should run default err handler if res.error is not sent', ()->
+          assert.equal @errData.error.message, "ERROR!"
