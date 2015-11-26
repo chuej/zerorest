@@ -47,7 +47,7 @@ describe 'task master', ()->
 
       it 'should push middleware function to @before', ()->
         assert.equal @beforeFn, @master.before[1]
-      it 'should push middleware functions to @localAfter if workers registered', ()->
+      it 'should push middleware functions to @localAfter if fn takes error', ()->
         assert.equal @afterFn, @master.localAfter[0]
     describe 'worker', ()->
       it 'should push worker config to @workers', ()->

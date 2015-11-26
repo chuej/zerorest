@@ -13,10 +13,10 @@ class Master extends EventEmitter
     @
   workers: []
   use: (fn)->
-    if @workers.length < 1
-      @before.push fn
-    else
+    if fn.length > 3
       @localAfter.push fn
+    else
+      @before.push fn
   worker: (path, fn)->
     @workers.push
       path: path

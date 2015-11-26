@@ -12,17 +12,17 @@ describe 'service provider', ()->
       assert @service.broker?
   context 'methods', ()->
     before ()->
-      @beforeFn = ->
+      @beforeFn = (req, res, next)->
       @service.use @beforeFn
       @path = "/master"
       @master = @service.master @path
-      @afterFn = ->
+      @afterFn = (err, req, res, next)->
       @service.use @afterFn
     describe 'use', ()->
 
       it 'should push fn to @before', ()->
         assert.equal @service.before[0], @beforeFn
-      it 'should push fn to @after if masters exist', ()->
+      it 'should push fn to @after if fn takes error', ()->
         assert.equal @service.after[0], @afterFn
     describe 'master', ()->
       it 'should create new master with given path', ()->
