@@ -1,5 +1,5 @@
-# ZeroMS : for building zeromq microservices
-
+# ZeroMS 
+Build microservices with ZeroMQ
 ## Usage
 ```javascript
 var ZM, startService;
