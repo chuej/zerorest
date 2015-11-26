@@ -8,7 +8,7 @@ describe 'rest adapter', ()->
     @opts = {"opts":"opts"}
     Adapter @req, @res, @opts
   it 'should copy opts to res.opts', ()->
-    assert.deeqEqual @opts, @req.opts
+    assert.deepEqual @opts, @req.opts
   context 'res.json', ()->
     it 'should call end with formatted body', ()->
       @body = {'args': 'args'}
