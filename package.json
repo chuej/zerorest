@@ -8,7 +8,7 @@
     "exampleClient": "PORT=5555 HOST=0.0.0.0 ./node_modules/.bin/coffee ./examples/rest/client.coffee"
   },
   "main": "./src/index.js",
-  "files":[
+  "files": [
     "src"
   ],
   "author": {
@@ -42,6 +42,8 @@
     "pigato": "0.0.42"
   },
   "devDependencies": {
-    "mocha": "2.2.5"
+    "benchmark": "^1.0.0",
+    "mocha": "2.2.5",
+    "request": "^2.67.0"
   }
 }

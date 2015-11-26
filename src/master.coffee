@@ -10,6 +10,7 @@ class Master extends EventEmitter
     @path = opts.path
     @adapter = opts.adapter or 'rest'
     @workers = []
+    @concurrency = opts.concurrency or 250
     @
   workers: []
   use: (fn)->
@@ -24,15 +25,17 @@ class Master extends EventEmitter
   start: (next)->
     async.each @workers, @startWork, next
   startWork: (worker, cb)=>
+    conf =
+      concurrency: @concurrency
     worker.fullPath = @path + worker.path
 
-    _worker = new Worker @url, worker.fullPath
+    _worker = new Worker @url, worker.fullPath, conf
     worker._worker = _worker
     emitError = (err)=>
       @emit 'WorkerError', err
     _worker.on 'error', emitError
     _worker.on 'request', (inp, rep, opts)=>
-      rep.copts = opts
+      inp.copts = opts
       rep.error = (err)->
         resp =
           error:

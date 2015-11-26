@@ -1,4 +1,4 @@
-# ZeroMS 
+# ZeroMS
 Build microservices with ZeroMQ
 ## Usage
 ```javascript
@@ -9,7 +9,7 @@ ZM = require('zeromicro');
 startService = function() {
   var templates, users, zms;
   zms = new ZMS("tcp://0.0.0.0:5555");
-  zms.use(ZMS.RestAdapter);
+  zms.use(ZMS.restAdapter);
 
   zms.use(function(req, res, next) {
     // middleware

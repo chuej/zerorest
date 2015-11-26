@@ -17,7 +17,6 @@ module.exports = (req, res, next)->
   res.error = (err)->
     rep =
       headers: headers
-      status: status
       status: 500
       error:
         stack: err.stack
