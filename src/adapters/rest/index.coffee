@@ -1,6 +1,7 @@
 module.exports = (req, res, opts)->
   status = null
   headers = null
+  req.opts = opts
   res.json = (body)->
     rep =
       headers: headers

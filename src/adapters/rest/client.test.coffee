@@ -21,8 +21,10 @@ describe 'zms client', ()->
       #resp should be entire response obj
       #body should resp.body
   it 'should have resp', ()->
-    console.log @resp
     assert @resp
+  it 'should have a body', ()->
+    assert @resp.body
+    assert @body 
   after ()->
     @zms.stop()
     delete @zms
