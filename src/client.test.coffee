@@ -71,7 +71,7 @@ startService = ->
         user: user
         req: req
     users.worker "/html", (req, res, next)->
-      res.sendRaw "<html></html>"
+      res.send "<html></html>"
     zms.start()
     return zms
   return startProvider()

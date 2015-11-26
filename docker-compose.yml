@@ -3,12 +3,14 @@ service:
   environment:
     ENV: development
     DEBUG: "*"
+    HOST: 0.0.0.0
+    PORT: 5555
   volumes:
     - ./src:/opt/app/src
     - ./examples:/opt/app/examples
     - ./package.json:/opt/app/package.json
     # - ./piEx:/opt/app/piEx
-  command: ["npm", "run-script", "exampleService"]
+  command: ["./node_modules/.bin/coffee", "./examples/rest/service.coffee"]
   ports:
     - 5555
   dns:
@@ -20,10 +22,12 @@ client:
   environment:
     ENV: development
     DEBUG: "*"
+    HOST: service
+    PORT: 5555
   volumes:
     - ./src:/opt/app/src
     - ./examples:/opt/app/examples
     - ./package.json:/opt/app/package.json
   links:
     - service
-  command: ["npm", "run-script", "exampleClient"]
+  command: ["./node_modules/.bin/coffee", "./examples/rest/client.coffee"]

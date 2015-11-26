@@ -33,6 +33,12 @@ class Master extends EventEmitter
     _worker.on 'error', emitError
     _worker.on 'request', (inp, rep, opts)=>
       rep.copts = opts
+      rep.error = (err)->
+        resp =
+          stack: err?.stack
+          message: err?.message
+          name: err?.name
+        rep.end JSON.stringify(resp)
       runBefore = async.applyEachSeries @before
       runAfter = async.applyEachSeries @after
       runLocalAfter = async.applyEachSeries @localAfter
@@ -40,7 +46,7 @@ class Master extends EventEmitter
       handleError = (err)->
         runLocalAfter err, inp, rep, (err)->
           runAfter err, inp, rep, (err)->
-            emitError err
+            rep.error err
       runBefore inp, rep, (err)->
         return handleError(err) if err
         worker.cb inp, rep, (err)->

@@ -15,7 +15,7 @@ describe 'rest adapter', ()->
         assert.deepEqual args.body, @body
         return done null
       @res.json @body
-  context 'res.sendRaw', ()->
+  context 'res.send', ()->
     it 'should call end with raw (non-json) data', (done)->
       @body = '<html></html>'
       @res.end = (args)=>

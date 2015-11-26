@@ -1,17 +1,30 @@
-PIGATO = require('pigato')
-client = new (PIGATO.Client)('tcp://service:55555')
-client.start()
-client.on 'error', (err) ->
-  console.log 'CLIENT ERROR', err
-  return
-# Streaming implementation
-res = client.request('/users/findById', {
-  params: {id: '1234'}
-}, timeout: 90000)
-body = ''
-res.on('data', (data) ->
-  body += data
-  return
-).on 'end', ->
-  console.log "body:::", JSON.stringify(body, null, 2)
-  return
+Client = require('../../src').Client
+client = new Client "tcp://#{process.env.HOST}:#{process.env.PORT}"
+
+client.on 'start', ()->
+  opts =
+    params:
+      id: '1234'
+    body:
+      data: hello: "world"
+    headers:
+      method: 'PATCH'
+    copts:
+      timeout: 100000
+  client.request '/users/update', opts, (err, resp)->
+    # resp is json
+    console.log resp
+
+  opts =
+    params:
+      id: '4321'
+  client.request '/templates/html', opts, (err,resp)->
+    # resp is html
+    console.log resp
+
+  resp = ''
+  stream = client.request '/users/findById', opts
+  stream.on 'data', (data)->
+    resp += data
+  stream.on 'end', ()->
+    console.log resp

@@ -1,12 +1,39 @@
 {
   "name": "zeroms",
   "version": "0.0.1",
-  "private": true,
+  "private": false,
   "scripts": {
     "test": "./node_modules/.bin/mocha --compilers coffee:coffee-script/register --recursive **/**/*.test.coffee",
-    "exampleService": "./node_modules/.bin/coffee ./examples/rest/service.coffee",
-    "exampleClient": "./node_modules/.bin/coffee ./examples/rest/client.coffee"
+    "exampleService": "PORT=5555 HOST=0.0.0.0 ./node_modules/.bin/coffee ./examples/rest/service.coffee",
+    "exampleClient": "PORT=5555 HOST=0.0.0.0 ./node_modules/.bin/coffee ./examples/rest/client.coffee"
   },
+  "main": "./src/index.coffee",
+  "files":[
+    "src"
+  ],
+  "author": {
+    "name": "Ezra Chu"
+  },
+  "keywords": [
+    "zeromq",
+    "zmq",
+    "pigato",
+    "0mq",
+    "microservice",
+    "express",
+    "framework",
+    "rest",
+    "docker"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chuej/zeroms.git"
+  },
+  "bugs": {
+    "url": "https://github.com/chuej/zeroms/issues"
+  },
+  "homepage": "https://github.com/chuej/zeroms#readme",
+  "license": "MIT",
   "dependencies": {
     "async": "^1.4.0",
     "coffee-script": "^1.9.3",

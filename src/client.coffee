@@ -4,10 +4,11 @@ EventEmitter = require('events').EventEmitter
 class Client extends EventEmitter
   constructor: (url)->
     @url = url
-    @client = new PiClient @url
-    @client.start ()=>
-      @emit 'start'
-
+    conf =
+      onConnect: ()=>
+        @emit 'start'
+    @client = new PiClient @url, conf
+    @client.start()
     @client.on 'error', (err)=>
       @emit 'error', err
     @

@@ -5,12 +5,14 @@ Client = require('pigato').Client
 describe 'task master', ()->
   before ()->
     @before =[
-      (req, res, next)->
+      (req, res, next)=>
+        @beforeHit = true
         return next null
     ]
     @after = [
-      (err, req, res, next)->
-        res.end "ERROR"
+      (err, req, res, next)=>
+        @afterHit = true
+        return next err
     ]
     @url = "tcp://127.0.0.1:5555"
     @workerPath = "/findById"
@@ -36,7 +38,7 @@ describe 'task master', ()->
         assert res.copts
         return next null
       @afterFn = (err, req, res, next)->
-        return next null
+        return next err
       @master.use @beforeFn
       @cb = (req, res, next)->
         res.end req
@@ -77,11 +79,16 @@ describe 'task master', ()->
           throw err
         @client.request "#{@path}#{@workerPath}", {args:'args'}, (->), (err, @data)=>
           return done null
-      it 'should create workers from worker config', ()->
+      it 'should create workers from worker config that connect to broker', ()->
         assert @data
+      it 'should run @before on request', ()->
+        assert @beforeHit
       context 'request handler errrors', ()->
         before (done)->
           @client.request "#{@path}#{@errorPath}", {args:'args'}, (->), (err, @errData)=>
+            @errData = JSON.parse(@errData)
             return done null
         it 'should run @after', ()->
-          assert.equal @errData, "ERROR"
+          assert @afterHit
+        it 'should run default err handler if res is not sent', ()->
+          assert.equal @errData.message, "ERROR!"
