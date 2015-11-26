@@ -14,7 +14,7 @@ describe 'zms client', ()->
         data: hello: "world"
       headers:
         method: 'PATCH'
-      clientOpts:
+      copts:
         timeout: 10000
     client.request '/users/update', opts, (err, @resp, @body)=>
       return done err
@@ -24,7 +24,7 @@ describe 'zms client', ()->
     assert @resp
   it 'should have a body', ()->
     assert @resp.body
-    assert @body 
+    assert @body
   after ()->
     @zms.stop()
     delete @zms

@@ -9,7 +9,7 @@ module.exports = (url)->
       headers: args.headers
       body: args.body
 
-    res = client.request path, body, args.clientOpts
+    res = client.request path, body, args.copts
     if next?
       resBody = ''
       res.on 'data', (data)->
