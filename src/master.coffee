@@ -21,8 +21,8 @@ class Master extends EventEmitter
     @workers.push
       path: path
       cb: fn
-  start: ()->
-    async.forEach @workers, @startWork
+  start: (next)->
+    async.each @workers, @startWork, next
   startWork: (worker, cb)=>
     worker.fullPath = @path + worker.path
 
@@ -46,9 +46,9 @@ class Master extends EventEmitter
         worker.cb inp, rep, (err)=>
           return handleError(err) if err
 
-    _worker.start()
-    return cb null
-  stop: ()->
+    _worker.start cb
+  stop: (next)->
     async.each @workers, (worker, cb)->
       worker._worker.stop cb
+    , next
 module.exports = Master

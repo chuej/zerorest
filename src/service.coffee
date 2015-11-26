@@ -10,13 +10,11 @@ class Service extends EventEmitter
       onStart: ()=>
         @emit 'brokerStart'
         async.each @masters, (master, cb)->
-          master.start()
-          return cb null
+          master.start cb
       onStop: ()=>
         @emit 'brokerStop'
         async.each @masters, (master, cb)->
-          master.stop()
-          return cb null
+          master.stop cb
     @broker = new Broker @url, brokerConf
     @before = []
     @after = []
