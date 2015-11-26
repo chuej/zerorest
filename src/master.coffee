@@ -3,12 +3,13 @@ Worker = require('pigato').Worker
 async = require 'async'
 class Master extends EventEmitter
   constructor: (opts)->
-    @before = opts.before
-    @after = opts.after
+    @before = opts.before or []
+    @after = opts.after or []
     @localAfter = []
     @url = opts.url
     @path = opts.path
     @adapter = opts.adapter or 'rest'
+    @workers = []
     @
   workers: []
   use: (fn)->
@@ -47,4 +48,7 @@ class Master extends EventEmitter
 
     _worker.start()
     return cb null
+  stop: ()->
+    async.each @workers, (worker, cb)->
+      worker._worker.stop cb
 module.exports = Master

@@ -18,7 +18,9 @@ class Service extends EventEmitter
           master.stop()
           return cb null
     @broker = new Broker @url, brokerConf
-
+    @before = []
+    @after = []
+    @masters = []
     @
   before: []
   after: []
