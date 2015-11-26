@@ -22,6 +22,8 @@ describe 'task master', ()->
       url: @url
       path: @path
     @master = new Master opts
+    @master.on "WorkerError", (err)->
+      throw err
   context 'constructor', ()->
     it 'should set @before, @after, @url, and @path', ()->
       assert.deepEqual @master.before, @before

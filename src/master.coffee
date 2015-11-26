@@ -28,22 +28,22 @@ class Master extends EventEmitter
 
     _worker = new Worker @url, worker.fullPath
     worker._worker = _worker
-
-    _worker.on 'error', (err)=>
+    emitError = (err)=>
       @emit 'WorkerError', err
+    _worker.on 'error', emitError
     _worker.on 'request', (inp, rep, opts)=>
       require("./adapters/#{@adapter}") inp, rep, opts
       runBefore = async.applyEachSeries @before
       runAfter = async.applyEachSeries @after
       runLocalAfter = async.applyEachSeries @localAfter
 
-      handleError = (err)=>
-        runLocalAfter err, inp, rep, (err)=>
-          runAfter err, inp, rep, (err)=>
-            @emit 'WorkerError', err
-      runBefore inp, rep, (err)=>
+      handleError = (err)->
+        runLocalAfter err, inp, rep, (err)->
+          runAfter err, inp, rep, (err)->
+            emitError err
+      runBefore inp, rep, (err)->
         return handleError(err) if err
-        worker.cb inp, rep, (err)=>
+        worker.cb inp, rep, (err)->
           return handleError(err) if err
 
     _worker.start cb
