@@ -32,7 +32,7 @@ class Master extends EventEmitter
       @emit 'WorkerError', err
     _worker.on 'error', emitError
     _worker.on 'request', (inp, rep, opts)=>
-      require("./adapters/#{@adapter}") inp, rep, opts
+      rep.copts = opts
       runBefore = async.applyEachSeries @before
       runAfter = async.applyEachSeries @after
       runLocalAfter = async.applyEachSeries @localAfter

@@ -2,13 +2,11 @@ Adapter = require './'
 assert = require 'assert'
 
 describe 'rest adapter', ()->
-  before ()->
+  before (done)->
     @req = {}
     @res = {}
-    @opts = {"opts":"opts"}
-    Adapter @req, @res, @opts
-  it 'should copy opts to res.opts', ()->
-    assert.deepEqual @opts, @req.opts
+    Adapter @req, @res, (err)->
+      return done err
   context 'res.json', ()->
     it 'should call end with formatted body', (done)->
       @body = {'args': 'args'}

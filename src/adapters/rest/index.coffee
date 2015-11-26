@@ -1,7 +1,6 @@
-module.exports = (req, res, opts)->
+module.exports = (req, res, next)->
   status = null
   headers = null
-  req.opts = opts
   res.json = (body)->
     rep =
       headers: headers
@@ -16,3 +15,4 @@ module.exports = (req, res, opts)->
     status = newStatus
   res.setHeaders = (newHeaders)->
     headers = newHeaders
+  return next null

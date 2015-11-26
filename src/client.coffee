@@ -25,8 +25,10 @@ class Client extends EventEmitter
       .on 'end', ->
         try
           resBody = JSON.parse(resBody)
-          return next null, resBody, resBody.body
+          return next null, resBody
         catch err
+          if typeof(resBody) is 'string'
+            return next null, resBody
           return next err
     return res
 

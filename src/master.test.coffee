@@ -33,6 +33,7 @@ describe 'task master', ()->
   context 'methods', ()->
     before ()->
       @beforeFn = (req, res, next)->
+        assert res.copts
         return next null
       @afterFn = (err, req, res, next)->
         return next null

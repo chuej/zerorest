@@ -1,6 +1,6 @@
 URL = "tcp://0.0.0.0:5678"
 assert = require 'assert'
-Client = require './'
+Client = require './client'
 
 
 describe 'zms client', ()->
@@ -17,16 +17,16 @@ describe 'zms client', ()->
       copts:
         timeout: 10000
     @stream = @client.request '/users/update',  @opts
-    @client.request '/users/update', @opts, (err, @resp, @body)=>
-      return done err
-      #resp should be entire response obj
-      #body should resp.body
+    @client.request '/users/update', @opts, (err, @resp)=>
+      return done err if err
+      @body = @resp.body
+      @client.request '/users/html', @opts, (err, @htmlResp)=>
+        return done err
   context 'callback mode', ()->
     it 'should have resp', ()->
       assert @resp
     it 'should have a body', ()->
       assert @resp.body
-      assert @body
     context 'resp body from service', ()->
       it 'should have params.id as user.id', ()->
         assert @body.user.id
@@ -46,16 +46,18 @@ describe 'zms client', ()->
         return done null
     it 'should be able to compose data into string result', ()->
       assert @resp.length > 0
-
+  context 'html request', ()->
+    it 'should respond with raw text', ()->
+      assert.equal @htmlResp, "<html></html>"
   after ()->
     @zms.stop()
     @client.stop()
 startService = ->
-  ZMS = require '../../service'
+  ZMS = require './service'
 
   startProvider = ()->
     zms = new ZMS(URL)
-
+    zms.use require "./adapters/rest"
     users = zms.master("/users")
 
     users.worker "/update", (req, res, next)->
@@ -68,7 +70,8 @@ startService = ->
       res.json
         user: user
         req: req
-
+    users.worker "/html", (req, res, next)->
+      res.sendRaw "<html></html>"
     zms.start()
     return zms
   return startProvider()
