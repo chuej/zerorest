@@ -1,28 +1,26 @@
 EventEmitter = require('events').EventEmitter
 Router = require './router'
-Broker = require('pigato').Broker
+Broker = require './backends/zmq/broker'
 async = require 'async'
 
 class Service extends EventEmitter
   constructor: (url)->
     @url = url
-    brokerConf =
-      onStart: ()=>
-        @emit 'brokerStart'
-        async.each @routers, (router, cb)->
-          router.start cb
-      onStop: ()=>
-        @emit 'brokerStop'
-        async.each @routers, (router, cb)->
-          router.stop cb
-    @broker = new Broker @url, brokerConf
+
+    @broker = new Broker @url
+    @broker.on 'start', ()=>
+      @emit 'brokerStart'
+      async.each @routers, (router, cb)->
+        router.start cb
+    @broker.on 'stop', ()=>
+      @emit 'brokerStop'
+      async.each @routers, (router, cb)->
+        router.stop cb
     @before = []
     @after = []
     @routers = []
     @
-  before: []
-  after: []
-  routers: []
+
   use: (fn)->
     if fn.length > 3
       @after.push fn
