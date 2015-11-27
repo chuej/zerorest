@@ -1,9 +1,8 @@
-pigato = require 'pigato'
+PiWorker = require('pigato').Worker
 EventEmitter = require('events').EventEmitter
 
 class Worker extends EventEmitter
   constructor: (opts)->
-    piWorker = opts.Worker if opts.Worker
     @url = opts.url
     @path = opts.path
     conf =
@@ -11,12 +10,15 @@ class Worker extends EventEmitter
         @emit 'start'
       onDisconnect: ()=>
         @emit 'stop'
-    @piWorker = new piWorker @url, @path, conf
+    @piWorker = new PiWorker @url, @path, conf
     @
   start: ()->
-    @piWorker.start()
-    @worker.on 'request', (inp, rep)=>
-      @emit 'request', inp, rep
+    @piWorker.on 'request', (inp, rep, copts)=>
+      @emit 'request', inp, rep, copts
     @piWorker.on 'error', (err)=>
       @emit 'error', err
+    @piWorker.start()
+  stop: ()->
+    @piWorker.stop()
+
 module.exports = Worker

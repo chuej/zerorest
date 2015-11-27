@@ -13,9 +13,9 @@ class Broker extends EventEmitter
 
 
     @
-  start: (next)->
-    @piBroker.start next
+  start: ()->
+    @piBroker.start()
   stop: (next)->
-    @piBroker.stop next
+    @piBroker.stop()
 
 module.exports = Broker

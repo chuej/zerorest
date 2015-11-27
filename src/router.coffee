@@ -1,6 +1,7 @@
 EventEmitter = require('events').EventEmitter
-Worker = require('pigato').Worker
+Worker = require "./backends/zmq/worker"
 async = require 'async'
+
 class Router extends EventEmitter
   constructor: (opts)->
     @before = opts.before or []
@@ -27,8 +28,10 @@ class Router extends EventEmitter
     conf =
       concurrency: @concurrency
     worker.fullPath = @path + worker.path
-
-    _worker = new Worker @url, worker.fullPath, conf
+    opts =
+      url: @url
+      path: worker.fullPath
+    _worker = new Worker opts
     worker._worker = _worker
     emitError = (err)=>
       @emit 'WorkerError', err

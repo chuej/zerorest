@@ -6,11 +6,10 @@ client = new Client URL
 
 startProvider = ()->
   zms = new ZMS(URL)
-  zms.use ZMS.restAdapter
-  users = zms.master("/hello")
+  users = zms.router("/hello")
 
-  users.worker "/world", (req, res, next)->
-    res.opts.cache = 1000
+  users.route "/world", (req, res, next)->
+    res.opts.cache = 10000
     res.send "Hello World!"
   zms.start()
   return zms
