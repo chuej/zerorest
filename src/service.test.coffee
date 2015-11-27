@@ -35,13 +35,13 @@ describe 'service provider', ()->
         assert.equal @service.routers[0], @router
       context 'error', ()->
         before (done)->
-          @service.on 'RouterError', (@err)=>
-            @routerErrEmitted = true
+          @service.on 'error', (@err)=>
+            @serviceErrorEmitted = true
             return done null
           @router.emit 'error', new Error("error")
-        it 'should trigger RouerError', ()->
+        it 'should trigger service error', ()->
           assert @err
-          assert @routerErrEmitted
+          assert @serviceErrorEmitted
     describe 'start', ()->
       before (done)->
         @service.routers[0].start = ()=>

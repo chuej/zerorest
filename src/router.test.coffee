@@ -24,8 +24,7 @@ describe 'socket router', ()->
       url: @url
       path: @path
     @router = new Router opts
-    @router.on "error", (err)->
-      throw err
+
   context 'constructor', ()->
     it 'should set @before, @after, @url, and @path', ()->
       assert.deepEqual @router.before, @before
@@ -56,18 +55,13 @@ describe 'socket router', ()->
         assert.equal @router.routes.length, 1
         assert.equal @router.routes[0].path, @workerPath
         assert.equal @router.routes[0].cb, @cb
-    describe 'worker returning error', ()->
-      before ()->
 
+    describe 'start', ()->
+      before (done)->
+        @router.on "error", (@err)=>
         @cbError = (req, res, next)->
           return next new Error('ERROR!')
         @router.route @errorPath, @cbError
-      it 'should push worker config to @workers', ()->
-        assert.equal @router.routes.length, 2
-        assert.equal @router.routes[1].path, @errorPath
-        assert.equal @router.routes[1].cb, @cbError
-    describe 'start', ()->
-      before (done)->
         conf =
           onStart: ()=>
             @router.start()
@@ -85,6 +79,8 @@ describe 'socket router', ()->
         assert @beforeHit
       context 'request handler errrors', ()->
         before (done)->
+
+          @router.route @errorPath, @cbError
           @client.request "#{@path}#{@errorPath}", {args:'args'}, (->), (err, @errData)=>
             @errData = JSON.parse(@errData)
             return done null
@@ -92,3 +88,5 @@ describe 'socket router', ()->
           assert @afterHit
         it 'should run default err handler if res.error is not sent', ()->
           assert.equal @errData.error.message, "ERROR!"
+        it 'should emit error event', ()->
+          assert @err

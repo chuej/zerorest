@@ -14,7 +14,6 @@ class Service extends EventEmitter
         router.start cb
       , (err)->
         if err
-          @emit 'BrokerError', err
           @emit 'error', err
         @emit 'start'
     @broker.on 'stop', ()=>
@@ -23,7 +22,6 @@ class Service extends EventEmitter
         router.stop cb
       , (err)->
         if err
-          @emit 'BrokerError', err
           @emit 'error', err
         @emit 'stop'
     @before = []
@@ -44,7 +42,6 @@ class Service extends EventEmitter
       after: @after
     router = new Router opts
     router.on 'error', (err)=>
-      @emit 'RouterError', err
       @emit 'error', err
     @routers.push router
     return router

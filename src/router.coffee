@@ -50,10 +50,10 @@ class Router extends EventEmitter
       runLocalAfter = async.applyEachSeries @localAfter
 
       handleError = (err)=>
-        @emit 'error', err
         runLocalAfter err, req, res, (err)->
           runAfter err, req, res, (err)->
-            res.end "Internal Error"
+            emitError err
+            res.error err
       runBefore req, res, (err)->
         return handleError(err) if err
         worker.cb req, res, (err)->
