@@ -1,5 +1,5 @@
 EventEmitter = require('events').EventEmitter
-Master = require './master'
+Router = require './router'
 Broker = require('pigato').Broker
 async = require 'async'
 
@@ -9,34 +9,34 @@ class Service extends EventEmitter
     brokerConf =
       onStart: ()=>
         @emit 'brokerStart'
-        async.each @masters, (master, cb)->
-          master.start cb
+        async.each @routers, (router, cb)->
+          router.start cb
       onStop: ()=>
         @emit 'brokerStop'
-        async.each @masters, (master, cb)->
-          master.stop cb
+        async.each @routers, (router, cb)->
+          router.stop cb
     @broker = new Broker @url, brokerConf
     @before = []
     @after = []
-    @masters = []
+    @routers = []
     @
   before: []
   after: []
-  masters: []
+  routers: []
   use: (fn)->
     if fn.length > 3
       @after.push fn
     else
       @before.push fn
-  master: (path)->
+  router: (path)->
     opts =
       path: path
       url: @url
-      before: @before.slice(0)  #allow for master-specific middleware
+      before: @before.slice(0)  #allow for router-specific middleware
       after: @after
-    master = new Master opts
-    @masters.push master
-    return master
+    router = new Router opts
+    @routers.push router
+    return router
   start: ()->
     @broker.start()
   stop: ()->

@@ -1,30 +1,29 @@
 EventEmitter = require('events').EventEmitter
 Worker = require('pigato').Worker
 async = require 'async'
-class Master extends EventEmitter
+class Router extends EventEmitter
   constructor: (opts)->
     @before = opts.before or []
     @after = opts.after or []
     @localAfter = []
     @url = opts.url
     @path = opts.path
-    @adapter = opts.adapter or 'rest'
-    @workers = []
+    @routes = []
     @concurrency = opts.concurrency or 250
     @
-  workers: []
+  routes: []
   use: (fn)->
     if fn.length > 3
       @localAfter.push fn
     else
       @before.push fn
-  worker: (path, fn)->
-    @workers.push
+  route: (path, fn)->
+    @routes.push
       path: path
       cb: fn
   start: (next)->
-    async.each @workers, @startWork, next
-  startWork: (worker, cb)=>
+    async.each @routes, @startRoute, next
+  startRoute: (worker, cb)=>
     conf =
       concurrency: @concurrency
     worker.fullPath = @path + worker.path
@@ -34,31 +33,32 @@ class Master extends EventEmitter
     emitError = (err)=>
       @emit 'WorkerError', err
     _worker.on 'error', emitError
-    _worker.on 'request', (inp, rep, opts)=>
-      inp.copts = opts
-      rep.error = (err)->
+    _worker.on 'request', (req, res, opts)=>
+      req.copts = opts
+      req.path = worker.fullPath
+      res.error = (err)->
         resp =
           error:
             stack: err?.stack
             message: err?.message
             name: err?.name
-        rep.end JSON.stringify(resp)
+        res.end JSON.stringify(resp)
       runBefore = async.applyEachSeries @before
       runAfter = async.applyEachSeries @after
       runLocalAfter = async.applyEachSeries @localAfter
 
       handleError = (err)->
-        runLocalAfter err, inp, rep, (err)->
-          runAfter err, inp, rep, (err)->
-            rep.error err
-      runBefore inp, rep, (err)->
+        runLocalAfter err, req, res, (err)->
+          runAfter err, req, res, (err)->
+            res.error err
+      runBefore req, res, (err)->
         return handleError(err) if err
-        worker.cb inp, rep, (err)->
+        worker.cb req, res, (err)->
           return handleError(err) if err
 
     _worker.start cb
   stop: (next)->
-    async.each @workers, (worker, cb)->
+    async.each @routes, (worker, cb)->
       worker._worker.stop cb
     , next
-module.exports = Master
+module.exports = Router

@@ -51,8 +51,8 @@ describe 'zms client', ()->
     it 'should respond with raw text', ()->
       assert.equal @htmlResp, "<html></html>"
   context 'error response', ()->
-    it 'should return with error from worker', ()->
-      assert.equal @err.message, "ERROR"
+    it 'should return with error from route', ()->
+      assert.equal @err.message, "Error from service: ERROR"
   after ()->
     @zms.stop()
     @client.stop()
@@ -62,9 +62,9 @@ startService = ->
   startProvider = ()->
     zms = new ZMS(URL)
     zms.use require "./adapters/rest"
-    users = zms.master("/users")
+    users = zms.router("/users")
 
-    users.worker "/update", (req, res, next)->
+    users.route "/update", (req, res, next)->
       id = req.params.id
       user =
         id: id
@@ -74,9 +74,9 @@ startService = ->
       res.json
         user: user
         req: req
-    users.worker "/html", (req, res, next)->
+    users.route "/html", (req, res, next)->
       res.send "<html></html>"
-    users.worker "/error", (req, res, next)->
+    users.route "/error", (req, res, next)->
       res.error new Error 'ERROR'
     zms.start()
     return zms

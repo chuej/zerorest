@@ -14,8 +14,8 @@ describe 'service provider', ()->
     before ()->
       @beforeFn = (req, res, next)->
       @service.use @beforeFn
-      @path = "/master"
-      @master = @service.master @path
+      @path = "/router"
+      @router = @service.router @path
       @afterFn = (err, req, res, next)->
       @service.use @afterFn
     describe 'use', ()->
@@ -24,36 +24,36 @@ describe 'service provider', ()->
         assert.equal @service.before[0], @beforeFn
       it 'should push fn to @after if fn takes error', ()->
         assert.equal @service.after[0], @afterFn
-    describe 'master', ()->
-      it 'should create new master with given path', ()->
-        assert.equal @master.path, @path
-      it 'should create new master with @url, @before, and @after', ()->
-        assert.equal @master.before.length, @service.before.length
-        assert.equal @master.after.length, @service.after.length
-        assert.equal @master.url, @service.url
-      it 'should push master to @masters', ()->
-        assert.equal @service.masters[0], @master
+    describe 'router', ()->
+      it 'should create new router with given path', ()->
+        assert.equal @router.path, @path
+      it 'should create new router with @url, @before, and @after', ()->
+        assert.equal @router.before.length, @service.before.length
+        assert.equal @router.after.length, @service.after.length
+        assert.equal @router.url, @service.url
+      it 'should push router to @routers', ()->
+        assert.equal @service.routers[0], @router
     describe 'start', ()->
       before (done)->
-        @service.masters[0].start = ()=>
-          @masterStarted = true
+        @service.routers[0].start = ()=>
+          @routerStarted = true
         @service.on 'brokerStart', ()=>
           @brokerStarted = true
           return done null
         @service.start()
       it 'should start broker', ()->
         assert @brokerStarted
-      it 'should start masters', ()->
-        assert @masterStarted
+      it 'should start routers', ()->
+        assert @routerStarted
     describe 'stop', ()->
       before (done)->
-        @service.masters[0].stop = ()=>
-          @masterStopped = true
+        @service.routers[0].stop = ()=>
+          @routerStopped = true
         @service.on 'brokerStop', ()=>
           @brokerStopped = true
           return done null
         @service.stop()
       it 'should start broker', ()->
         assert @brokerStopped
-      it 'should start masters', ()->
-        assert @masterStopped
+      it 'should start routers', ()->
+        assert @routerStopped

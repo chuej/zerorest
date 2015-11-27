@@ -2,6 +2,9 @@
 Build microservices with ZeroMQ.
 
 Provides familiar express-style API as an abstraction of 0mq REQ/REP sockets for building REST-like microservice interfaces.
+## Todo
+- Allow array of request handlers.
+- zms.use: default router for service with path ""
 
 ## Installation
 You will need ZeroMQ installed: [Get ZeroMQ](http://zeromq.org/intro:get-the-software)
@@ -20,8 +23,8 @@ var users, zms;
 zms = new ZMS("tcp://0.0.0.0:5555");
 zms.use(ZMS.restAdapter);
 
-users = zms.master("/users");
-users.worker("/findById", function(req, res, next) {
+users = zms.router("/users");
+users.route("/findById", function(req, res, next) {
   return res.json({
     user: {
       id: req.params.id
@@ -94,7 +97,7 @@ startService = function() {
   });
 
 
-  users = zms.master("/users");
+  users = zms.router("/users");
   users.use(function(req, res, next) {
     // users specific middleware
     return next(null);
@@ -104,14 +107,14 @@ startService = function() {
     // calling next w/ error will continue on to service error handlers
     return next(err);
   });
-  users.worker("/findById", function(req, res, next) {
+  users.route("/findById", function(req, res, next) {
     return res.json({
       user: {
         id: req.params.id
       }
     });
   });
-  users.worker("/update", function(req, res, next) {
+  users.route("/update", function(req, res, next) {
     res.setStatus(201);
     return res.json({
       user: {
@@ -121,8 +124,8 @@ startService = function() {
   });
 
 
-  templates = zms.master("/templates");
-  templates.worker("/html", function(req, res, next) {
+  templates = zms.router("/templates");
+  templates.route("/html", function(req, res, next) {
     return res.send("<html></html>");
   });
 

@@ -1,8 +1,8 @@
-Master = require './master'
+Router = require './router'
 assert = require 'assert'
 Broker = require('pigato').Broker
 Client = require('pigato').Client
-describe 'task master', ()->
+describe 'socket router', ()->
   before ()->
     @before =[
       (req, res, next)=>
@@ -17,21 +17,21 @@ describe 'task master', ()->
     @url = "tcp://127.0.0.1:5555"
     @workerPath = "/findById"
     @errorPath = "/error"
-    @path = "/master"
+    @path = "/router"
     opts =
       before: @before
       after: @after
       url: @url
       path: @path
-    @master = new Master opts
-    @master.on "WorkerError", (err)->
+    @router = new Router opts
+    @router.on "WorkerError", (err)->
       throw err
   context 'constructor', ()->
     it 'should set @before, @after, @url, and @path', ()->
-      assert.deepEqual @master.before, @before
-      assert.deepEqual @master.after, @after
-      assert.equal @master.path, @path
-      assert.equal @master.url, @url
+      assert.deepEqual @router.before, @before
+      assert.deepEqual @router.after, @after
+      assert.equal @router.path, @path
+      assert.equal @router.url, @url
   context 'methods', ()->
     before ()->
       @beforeFn = (req, res, next)->
@@ -39,38 +39,38 @@ describe 'task master', ()->
         return next null
       @afterFn = (err, req, res, next)->
         return next err
-      @master.use @beforeFn
+      @router.use @beforeFn
       @cb = (req, res, next)->
         res.end req
 
-      @master.worker @workerPath, @cb
-      @master.use @afterFn
+      @router.route @workerPath, @cb
+      @router.use @afterFn
     describe 'use', ()->
 
       it 'should push middleware function to @before', ()->
-        assert.equal @beforeFn, @master.before[1]
+        assert.equal @beforeFn, @router.before[1]
       it 'should push middleware functions to @localAfter if fn takes error', ()->
-        assert.equal @afterFn, @master.localAfter[0]
+        assert.equal @afterFn, @router.localAfter[0]
     describe 'worker', ()->
       it 'should push worker config to @workers', ()->
-        assert.equal @master.workers.length, 1
-        assert.equal @master.workers[0].path, @workerPath
-        assert.equal @master.workers[0].cb, @cb
+        assert.equal @router.routes.length, 1
+        assert.equal @router.routes[0].path, @workerPath
+        assert.equal @router.routes[0].cb, @cb
     describe 'worker returning error', ()->
       before ()->
 
         @cbError = (req, res, next)->
           return next new Error('ERROR!')
-        @master.worker @errorPath, @cbError
+        @router.route @errorPath, @cbError
       it 'should push worker config to @workers', ()->
-        assert.equal @master.workers.length, 2
-        assert.equal @master.workers[1].path, @errorPath
-        assert.equal @master.workers[1].cb, @cbError
+        assert.equal @router.routes.length, 2
+        assert.equal @router.routes[1].path, @errorPath
+        assert.equal @router.routes[1].cb, @cbError
     describe 'start', ()->
       before (done)->
         conf =
           onStart: ()=>
-            @master.start()
+            @router.start()
         @broker = new Broker @url, conf
         @broker.start()
         @client = new Client @url
