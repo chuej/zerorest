@@ -2,9 +2,6 @@
 Build microservices with ZeroMQ.
 
 Provides familiar express-style API as an abstraction of 0mq REQ/REP sockets for building REST-like microservice interfaces.
-## Todo
-- Allow array of request handlers.
-- zms.use: default router for service with path ""
 
 ## Installation
 You will need ZeroMQ installed: [Get ZeroMQ](http://zeromq.org/intro:get-the-software)
