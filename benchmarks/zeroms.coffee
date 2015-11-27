@@ -6,7 +6,7 @@ client = new Client URL
 
 startProvider = ()->
   zms = new ZMS(URL)
-  zms.use ZMS.restAdapter
+  zms.use ZMS.restInterface
   users = zms.master("/hello")
 
   users.worker "/world", (req, res, next)->
