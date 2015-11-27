@@ -1,4 +1,5 @@
 Client = require('../../src').Client
+host = process.env.HOST or "0.0.0.0"
 client = new Client "tcp://#{process.env.HOST}:#{process.env.PORT}"
 
 client.on 'start', ()->

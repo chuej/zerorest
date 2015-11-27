@@ -1,0 +1,2 @@
+#!/bin/sh
+PORT=5555 ./node_modules/.bin/coffee ./examples/rest/client.coffee

@@ -3,7 +3,7 @@ ZMS = require '../../src'
 startProvider = ()->
   zms = new ZMS("tcp://#{process.env.HOST}:#{process.env.PORT}")
 
-  zms.use require "../../src/adapters/rest"
+  zms.use ZMS.restInterface
   zms.use (req, res, next)->
     #middleware
     return next null

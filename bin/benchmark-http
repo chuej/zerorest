@@ -1,0 +1,2 @@
+#!/bin/sh
+PORT=5555 HOST=0.0.0.0 ./node_modules/.bin/coffee ./benchmarks/http.coffee
