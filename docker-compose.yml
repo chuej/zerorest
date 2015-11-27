@@ -6,10 +6,10 @@ service:
     HOST: 0.0.0.0
     PORT: 5555
   volumes:
+    - ./benchmarks:/opt/app/benchmarks
     - ./src:/opt/app/src
     - ./examples:/opt/app/examples
     - ./package.json:/opt/app/package.json
-    # - ./piEx:/opt/app/piEx
   command: ["./node_modules/.bin/coffee", "./examples/rest/service.coffee"]
   ports:
     - 5555
@@ -17,7 +17,7 @@ service:
     - 172.17.42.1
     - 8.8.4.4
     - 8.8.8.8
-client:
+example:
   build: "./"
   environment:
     ENV: development
@@ -25,6 +25,7 @@ client:
     HOST: service
     PORT: 5555
   volumes:
+    - ./benchmarks:/opt/app/benchmarks
     - ./src:/opt/app/src
     - ./examples:/opt/app/examples
     - ./package.json:/opt/app/package.json
