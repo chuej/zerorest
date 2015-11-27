@@ -33,7 +33,7 @@ class Router extends EventEmitter
     _worker = new Worker opts
     worker._worker = _worker
     emitError = (err)=>
-      @emit 'WorkerError', err
+      @emit 'error', err
     _worker.on 'error', emitError
     _worker.on 'request', (req, res, opts)=>
       req.copts = opts
@@ -49,15 +49,15 @@ class Router extends EventEmitter
       runAfter = async.applyEachSeries @after
       runLocalAfter = async.applyEachSeries @localAfter
 
-      handleError = (err)->
+      handleError = (err)=>
+        @emit 'error', err
         runLocalAfter err, req, res, (err)->
           runAfter err, req, res, (err)->
-            res.error err
+            res.end "Internal Error"
       runBefore req, res, (err)->
         return handleError(err) if err
         worker.cb req, res, (err)->
           return handleError(err) if err
-
     _worker.start cb
   stop: (next)->
     async.each @routes, (worker, cb)->

@@ -10,6 +10,7 @@ startProvider = ()->
 
   users.route "/world", (req, res, next)->
     res.end "Hello World!"
+
   zms.start()
   return zms
 startProvider()
@@ -23,6 +24,7 @@ client.on 'start', ()->
   bench = new Benchmark 'ZMS',
     defer: true
     async: true
+    minSamples: 100
     fn: (deferred)->
       client.request '/hello/world', opts, (err, resp)->
         deferred.resolve()

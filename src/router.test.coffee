@@ -24,7 +24,7 @@ describe 'socket router', ()->
       url: @url
       path: @path
     @router = new Router opts
-    @router.on "WorkerError", (err)->
+    @router.on "error", (err)->
       throw err
   context 'constructor', ()->
     it 'should set @before, @after, @url, and @path', ()->

@@ -33,11 +33,20 @@ describe 'service provider', ()->
         assert.equal @router.url, @service.url
       it 'should push router to @routers', ()->
         assert.equal @service.routers[0], @router
+      context 'error', ()->
+        before (done)->
+          @service.on 'RouterError', (@err)=>
+            @routerErrEmitted = true
+            return done null
+          @router.emit 'error', new Error("error")
+        it 'should trigger RouerError', ()->
+          assert @err
+          assert @routerErrEmitted
     describe 'start', ()->
       before (done)->
         @service.routers[0].start = ()=>
           @routerStarted = true
-        @service.on 'brokerStart', ()=>
+        @service.on 'BrokerStart', ()=>
           @brokerStarted = true
           return done null
         @service.start()
@@ -49,7 +58,7 @@ describe 'service provider', ()->
       before (done)->
         @service.routers[0].stop = ()=>
           @routerStopped = true
-        @service.on 'brokerStop', ()=>
+        @service.on 'BrokerStop', ()=>
           @brokerStopped = true
           return done null
         @service.stop()

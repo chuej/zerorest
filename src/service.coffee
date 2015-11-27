@@ -9,13 +9,23 @@ class Service extends EventEmitter
 
     @broker = new Broker @url
     @broker.on 'start', ()=>
-      @emit 'brokerStart'
+      @emit 'BrokerStart'
       async.each @routers, (router, cb)->
         router.start cb
+      , (err)->
+        if err
+          @emit 'BrokerError', err
+          @emit 'error', err
+        @emit 'start'
     @broker.on 'stop', ()=>
-      @emit 'brokerStop'
+      @emit 'BrokerStop'
       async.each @routers, (router, cb)->
         router.stop cb
+      , (err)->
+        if err
+          @emit 'BrokerError', err
+          @emit 'error', err
+        @emit 'stop'
     @before = []
     @after = []
     @routers = []
@@ -33,6 +43,9 @@ class Service extends EventEmitter
       before: @before.slice(0)  #allow for router-specific middleware
       after: @after
     router = new Router opts
+    router.on 'error', (err)=>
+      @emit 'RouterError', err
+      @emit 'error', err
     @routers.push router
     return router
   start: ()->
