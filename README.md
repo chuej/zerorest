@@ -128,12 +128,13 @@ startService = function() {
 
 
   zms.use(function(err, req, res, next) {
-    // error handler
+    // handler for errs generated in service
      //calling next w/ err will trigger default res.error
     return res.send("ERROR");
   });
   zms.on 'error', (err)->
-    // handle uncaught broker/router errors
+    // handle uncaught service/router errors
+
   return zms.start();
 };
 
