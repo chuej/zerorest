@@ -6,11 +6,12 @@ service:
     HOST: 0.0.0.0
     PORT: 5555
   volumes:
+    - ./bin:/opt/app/bin
     - ./benchmarks:/opt/app/benchmarks
     - ./src:/opt/app/src
     - ./examples:/opt/app/examples
     - ./package.json:/opt/app/package.json
-  command: ["./node_modules/.bin/coffee", "./examples/rest/service.coffee"]
+  command: ["sh", "-c", "./bin/example-service"]
   ports:
     - 5555
   dns:
@@ -25,10 +26,11 @@ example:
     HOST: service
     PORT: 5555
   volumes:
+    - ./bin:/opt/app/bin
     - ./benchmarks:/opt/app/benchmarks
     - ./src:/opt/app/src
     - ./examples:/opt/app/examples
     - ./package.json:/opt/app/package.json
   links:
     - service
-  command: ["./node_modules/.bin/coffee", "./examples/rest/client.coffee"]
+  command: ["sh", "-c", "./bin/example-client"]

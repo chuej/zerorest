@@ -66,15 +66,15 @@ The following command will start the example service, the the client.
 ```sh
 docker-compose up example
 ```
-### npm scripts
+### sh scripts
 Service:
 ```sh
-npm run-script example-service
+bin/example-service
 ```
 
 Client:
 ```sh
-npm run-script example-client
+bin/example-client
 ```
 
 ## Usage
