@@ -25,12 +25,11 @@ class Router extends EventEmitter
   start: (next)->
     async.each @routes, @startRoute, next
   startRoute: (worker, cb)=>
-    conf =
-      concurrency: @concurrency
     worker.fullPath = @path + worker.path
     opts =
       url: @url
       path: worker.fullPath
+      concurrency: @concurrency
     _worker = new Worker opts
     worker._worker = _worker
     emitError = (err)=>
