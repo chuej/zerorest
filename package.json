@@ -1,11 +1,9 @@
 {
   "name": "zeroms",
-  "version": "0.4.2",
+  "version": "0.4.3",
   "private": false,
   "scripts": {
-    "test": "./node_modules/.bin/mocha --compilers coffee:coffee-script/register --recursive **/**/*.test.coffee",
-    "example-service": "PORT=5555 HOST=0.0.0.0 ./node_modules/.bin/coffee ./examples/rest/service.coffee",
-    "example-client": "PORT=5555 HOST=0.0.0.0 ./node_modules/.bin/coffee ./examples/rest/client.coffee"
+    "test": "./node_modules/.bin/mocha --compilers coffee:coffee-script/register --recursive **/**/*.test.coffee"
   },
   "main": "./src/index.js",
   "files": [
@@ -27,12 +25,12 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/chuej/zeroms.git"
+    "url": "git+https://github.com/chuej/zerorest.git"
   },
   "bugs": {
-    "url": "https://github.com/chuej/zeroms/issues"
+    "url": "https://github.com/chuej/zerorest/issues"
   },
-  "homepage": "https://github.com/chuej/zeroms#readme",
+  "homepage": "https://github.com/chuej/zerorest#readme",
   "license": "MIT",
   "dependencies": {
     "async": "^1.4.0",
