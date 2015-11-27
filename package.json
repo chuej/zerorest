@@ -37,7 +37,6 @@
   "dependencies": {
     "async": "^1.4.0",
     "coffee-script": "^1.9.3",
-    "debug": "~2.2.0",
     "lodash": "^3.10.0",
     "pigato": "0.0.42"
   },
