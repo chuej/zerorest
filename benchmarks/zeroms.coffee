@@ -9,7 +9,6 @@ startProvider = ()->
   users = zms.router("/hello")
 
   users.route "/world", (req, res, next)->
-    res.opts.cache = 1000
     res.end "Hello World!"
   zms.start()
   return zms

@@ -2,9 +2,6 @@
 Build microservices with ZeroMQ.
 
 Provides familiar express-style API as an abstraction of 0mq REQ/REP sockets for building REST-like microservice interfaces.
-## Todo
-- Allow array of request handlers.
-- zms.use: default router for service with path ""
 
 ## Installation
 You will need ZeroMQ installed: [Get ZeroMQ](http://zeromq.org/intro:get-the-software)
@@ -21,7 +18,7 @@ ZM = require('zeromicro');
 
 var users, zms;
 zms = new ZMS("tcp://0.0.0.0:5555");
-zms.use(ZMS.restAdapter);
+zms.use(ZMS.restInterface);
 
 users = zms.router("/users");
 users.route("/findById", function(req, res, next) {
@@ -89,7 +86,7 @@ ZM = require('zeromicro');
 startService = function() {
   var templates, users, zms;
   zms = new ZMS("tcp://0.0.0.0:5555");
-  zms.use(ZMS.restAdapter);
+  zms.use(ZMS.restInterface);
 
   zms.use(function(req, res, next) {
     // middleware
