@@ -138,9 +138,9 @@ startService = function() {
      //calling next w/ err will trigger default res.error
     return res.send("ERROR");
   });
-  zms.on 'error', (err)->
+  zms.on('error', function(err) {
     // handle uncaught service/router errors
-
+  });
   return zms.start();
 };
 
