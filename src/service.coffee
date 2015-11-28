@@ -41,6 +41,8 @@ class Service extends EventEmitter
         if err
           @emit 'error', err
         @emit 'stop'
+    @broker.on 'error', (err)=>
+      @emit 'error', err
     @before = []
     @after = []
     @routers = []

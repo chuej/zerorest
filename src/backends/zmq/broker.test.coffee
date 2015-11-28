@@ -28,6 +28,8 @@ describe 'broker', ()->
       @broker.start()
     it 'should fire start event', ()->
       assert @brokerStartEvent
+    it 'should have num brokers equal to concurrency', ()->
+      assert.equal @broker.num, @concurrency
   describe 'on stop', ()->
     before (done)->
       @broker.on 'stop', ()=>
