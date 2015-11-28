@@ -2,7 +2,7 @@ Router = require './router'
 assert = require 'assert'
 Broker = require('pigato').Broker
 Client = require('pigato').Client
-describe 'socket router', ()->
+describe 'router', ()->
   before ()->
     @before =[
       (req, res, next)=>
@@ -44,12 +44,15 @@ describe 'socket router', ()->
 
       @router.route @workerPath, @cb
       @router.use @afterFn
+      @router.use [@afterFn]
     describe 'use', ()->
 
       it 'should push middleware function to @before', ()->
         assert.equal @beforeFn, @router.before[1]
       it 'should push middleware functions to @localAfter if fn takes error', ()->
         assert.equal @afterFn, @router.localAfter[0]
+      it 'should be able to push array of fns', ()->
+        assert.equal @afterFn,@router.localAfter[1]
     describe 'worker', ()->
       it 'should push worker config to @workers', ()->
         assert.equal @router.routes.length, 1

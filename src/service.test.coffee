@@ -18,12 +18,15 @@ describe 'service provider', ()->
       @router = @service.router @path
       @afterFn = (err, req, res, next)->
       @service.use @afterFn
+      @service.use [@afterFn]
     describe 'use', ()->
 
       it 'should push fn to @before', ()->
         assert.equal @service.before[0], @beforeFn
       it 'should push fn to @after if fn takes error', ()->
         assert.equal @service.after[0], @afterFn
+      it 'should be able to push array of fns', ()->
+        assert.equal @service.after[1], @afterFn
     describe 'router', ()->
       it 'should create new router with given path', ()->
         assert.equal @router.path, @path

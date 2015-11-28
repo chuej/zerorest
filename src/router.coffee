@@ -14,7 +14,9 @@ class Router extends EventEmitter
     @
   routes: []
   use: (fn)->
-    if fn.length > 3
+    if typeof(fn) is 'object'
+      fn.forEach @use.bind(@)
+    else if fn.length > 3
       @localAfter.push fn
     else
       @before.push fn

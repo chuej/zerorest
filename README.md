@@ -9,6 +9,7 @@ You will need ZeroMQ installed: [Get ZeroMQ](http://zeromq.org/intro:get-the-sof
 ```sh
 npm install zerorest
 ```
+
 ## Quickstart
 Service:
 ```javascript
@@ -93,6 +94,8 @@ startService = function() {
     return next(null);
   });
 
+  // array of middleware 
+  zms.use [function(req,res,next){ return next(null); }];
 
   users = zms.router("/users");
   users.use(function(req, res, next) {
@@ -210,3 +213,7 @@ cd zerorest
 npm install
 npm test
 ```
+
+## Resources
+- [Why You Should Start Using Microservices](https://blog.risingstack.com/why-you-should-start-using-microservices/)
+- [ZeroMQ instead of HTTP, for internal services | Hacker News](https://news.ycombinator.com/item?id=6086983)

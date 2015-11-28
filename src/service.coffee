@@ -30,7 +30,9 @@ class Service extends EventEmitter
     @
 
   use: (fn)->
-    if fn.length > 3
+    if typeof(fn) is 'object'
+      fn.forEach @use.bind(@)
+    else if fn.length > 3
       @after.push fn
     else
       @before.push fn
