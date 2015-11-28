@@ -1,6 +1,6 @@
 {
   "name": "zerorest",
-  "version": "0.4.3",
+  "version": "0.4.4",
   "private": false,
   "scripts": {
     "test": "./node_modules/.bin/mocha --compilers coffee:coffee-script/register --recursive **/**/*.test.coffee"
