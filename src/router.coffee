@@ -12,8 +12,10 @@ class Router extends EventEmitter
     @url = opts.url
     @path = opts.path
     @routes = []
-    @concurreny = opts.concurrency or 5
-    @socketConcurrency = opts.socketConcurrency or 100
+    @concurrency = opts.concurrency
+    @socketConcurrency = opts.socketConcurrency
+    @heartbeat = opts.heartbeat
+    @reconnect = opts.reconnect
     @
   routes: []
   use: (fn)->
@@ -41,7 +43,10 @@ class Router extends EventEmitter
     opts =
       url: @url
       path: worker.fullPath
-      concurrency: @socketConcurrency
+      socketConcurrency: @socketConcurrency
+      concurrency: @concurrency
+      heartbeat: @heartbeat
+      reconnect: @reconnect
     _worker = new Worker opts
     worker._worker = _worker
     emitError = (err)=>

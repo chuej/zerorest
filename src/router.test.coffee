@@ -18,11 +18,19 @@ describe 'router', ()->
     @workerPath = "/findById"
     @errorPath = "/error"
     @path = "/router"
+    @concurrency = 10
+    @heartbeat = 500
+    @reconnect = 500
+    @socketConcurrency = 500
     opts =
       before: @before
       after: @after
       url: @url
       path: @path
+      concurrency: @concurrency
+      socketConcurrency: @socketConcurrency
+      heartbeat: @heartbeat
+      reconnect: @reconnect
     @router = new Router opts
 
   context 'constructor', ()->
@@ -30,7 +38,11 @@ describe 'router', ()->
       assert.deepEqual @router.before, @before
       assert.deepEqual @router.after, @after
       assert.equal @router.path, @path
-      assert.equal @router.url, @url
+    it 'should set worker options', ()->
+      assert.equal @router.concurrency, @concurrency
+      assert.equal @router.heartbeat, @heartbeat
+      assert.equal @router.reconnect, @reconnect
+      assert.equal @router.socketConcurrency, @socketConcurrency
   context 'methods', ()->
     before ()->
       @beforeFn = (req, res, next)->
