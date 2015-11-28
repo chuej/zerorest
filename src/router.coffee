@@ -2,6 +2,7 @@ EventEmitter = require('events').EventEmitter
 Worker = require "./backends/zmq/worker"
 async = require 'async'
 RespInterface = require './interfaces/response'
+debug = require('debug')('zerorest:Router')
 
 class Router extends EventEmitter
   constructor: (opts)->
@@ -27,6 +28,7 @@ class Router extends EventEmitter
       path: path
       cb: fn
   start: (next)->
+    debug("Starting...")
     async.each @routes, @startRoute, next
   interfaces: (req, res, opts)->
     RespInterface req, res, opts
@@ -34,6 +36,8 @@ class Router extends EventEmitter
 
   startRoute: (worker, cb)=>
     worker.fullPath = @path + worker.path
+    debug("Starting route: #{worker.fullPath}")
+
     opts =
       url: @url
       path: worker.fullPath
@@ -44,6 +48,7 @@ class Router extends EventEmitter
       @emit 'error', err
     _worker.on 'error', emitError
     _worker.on 'request', (req, res, opts)=>
+      debug("Received request to #{worker.fullPath}")
       if typeof(req) is 'string'
         formattedReq = {}
         formattedReq.body = req if req.length > 0
@@ -66,6 +71,7 @@ class Router extends EventEmitter
           return handleError(err) if err
     _worker.start cb
   stop: (next)->
+    debug("Stopping...")
     async.each @routes, (worker, cb)->
       worker._worker.stop cb
     , next

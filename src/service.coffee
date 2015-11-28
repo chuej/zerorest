@@ -2,6 +2,7 @@ EventEmitter = require('events').EventEmitter
 Router = require './router'
 Broker = require './backends/zmq/broker'
 async = require 'async'
+debug = require('debug')("zerorest:Service")
 
 class Service extends EventEmitter
   constructor: (url)->
@@ -9,6 +10,7 @@ class Service extends EventEmitter
 
     @broker = new Broker @url
     @broker.on 'start', ()=>
+      debug("Broker started.")
       @emit 'BrokerStart'
       async.each @routers, (router, cb)->
         router.start cb
@@ -17,6 +19,7 @@ class Service extends EventEmitter
           @emit 'error', err
         @emit 'start'
     @broker.on 'stop', ()=>
+      debug "Broker stopped."
       @emit 'BrokerStop'
       async.each @routers, (router, cb)->
         router.stop cb
@@ -48,7 +51,9 @@ class Service extends EventEmitter
     @routers.push router
     return router
   start: ()->
+    debug "Starting..."
     @broker.start()
   stop: ()->
+    debug "Stopping..."
     @broker.stop()
 module.exports = Service
