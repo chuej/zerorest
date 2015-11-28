@@ -94,8 +94,8 @@ startService = function() {
     return next(null);
   });
 
-  // array of middleware 
-  zms.use [function(req,res,next){ return next(null); }];
+  // array of middleware
+  zms.use([function(req,res,next){ return next(null); }]);
 
   users = zms.router("/users");
   users.use(function(req, res, next) {
