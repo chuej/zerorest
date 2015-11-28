@@ -5,10 +5,24 @@ async = require 'async'
 debug = require('debug')("zerorest:Service")
 
 class Service extends EventEmitter
-  constructor: (url)->
-    @url = url
+  constructor: (opts)->
+    if typeof(opts) is 'string'
+      @url = opts
+      @heartbeat = undefined
+      @lbmode = undefined
+      @concurrency = undefined
+    else
+      @url = opts.url
+      @heartbeat = opts.heartbeat
+      @lbmode = opts.lbmode
+      @concurrency = opts.concurrency
 
-    @broker = new Broker @url
+    conf =
+      url: @url
+      heartbeat: @heartbeat
+      lbmode: @lbmode
+      concurrency: @concurrency
+    @broker = new Broker conf
     @broker.on 'start', ()=>
       debug("Broker started.")
       @emit 'BrokerStart'

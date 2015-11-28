@@ -5,11 +5,21 @@ Broker = require './broker'
 describe 'broker', ()->
   before ()->
     @initUrl = "tcp://*:5555"
-    @broker = new Broker @initUrl
+    @heartbeat = 5000
+    @lbmode = 'rand'
+    @concurrency = 10
+    opts =
+      url: @initUrl
+      heartbeat: @heartbeat
+      lbmode: @lbmode
+      concurrency: @concurrency
+    @broker = new Broker opts
 
   it 'should have a url property for workers to connect to', ()->
     assert.equal @broker.url, @initUrl
-
+    assert.equal @broker.heartbeat, @heartbeat
+    assert.equal @broker.lbmode, @lbmode
+    assert.equal @broker.concurrency, @concurrency
   describe 'on start', ()->
     before (done)->
       @broker.on 'start', ()=>

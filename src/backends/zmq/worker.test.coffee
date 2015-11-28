@@ -6,7 +6,7 @@ Broker = require './broker'
 describe 'worker', ()->
   before (done)->
     @initUrl = "tcp://0.0.0.0:5555"
-    @broker = new Broker @initUrl
+    @broker = new Broker url: @initUrl
     @broker.on 'start', ()=>
       opts =
         url: @initUrl
