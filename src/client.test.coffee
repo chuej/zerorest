@@ -61,7 +61,6 @@ startService = ->
 
   startProvider = ()->
     zms = new ZMS(URL)
-    zms.use require "./interfaces/rest"
     users = zms.router("/users")
 
     users.route "/update", (req, res, next)->

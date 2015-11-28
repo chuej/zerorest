@@ -2,11 +2,10 @@ Adapter = require './'
 assert = require 'assert'
 
 describe 'rest adapter', ()->
-  before (done)->
+  before ()->
     @req = {}
     @res = {}
-    Adapter @req, @res, (err)->
-      return done err
+    Adapter @req, @res
   context 'res.json', ()->
     it 'should call end with formatted body', (done)->
       @body = {'args': 'args'}
@@ -16,12 +15,9 @@ describe 'rest adapter', ()->
         return done null
       @res.json @body
   context 'res.send', ()->
-    it 'should call end with raw (non-json) data', (done)->
+    it 'should call end with raw (non-json) data', ()->
       @body = '<html></html>'
-      @res.end = (args)=>
-        assert.equal @body, args
-        return done null
-      @res.end @body
+      assert @res.end, @res.send
   context 'res.setStatus', ()->
     it 'should set status of response', (done)->
       @res.setStatus 200

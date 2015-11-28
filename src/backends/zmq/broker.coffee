@@ -9,6 +9,7 @@ class Broker extends EventEmitter
         @emit 'start'
       onStop: ()=>
         @emit 'stop'
+      heartbeat: 20000
     @piBroker = new piBroker @url, conf
 
 

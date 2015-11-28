@@ -4,5 +4,3 @@ var exports;
 exports = module.exports = require("./service");
 
 exports.Client = require("./client");
-
-exports.restInterface = require("./interfaces/rest");

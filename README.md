@@ -19,7 +19,6 @@ ZR = require('zerorest');
 
 var users, zms;
 zms = new ZR("tcp://0.0.0.0:5555");
-zms.use(ZR.restInterface);
 
 users = zms.router("/users");
 users.route("/findById", function(req, res, next) {
@@ -87,7 +86,7 @@ ZR = require('zerorest');
 startService = function() {
   var templates, users, zms;
   zms = new ZR("tcp://0.0.0.0:5555");
-  zms.use(ZR.restInterface);
+
 
   zms.use(function(req, res, next) {
     // middleware

@@ -1,4 +1,4 @@
-module.exports = (req, res, next)->
+module.exports = (req, res, opts)->
   status = undefined
   headers = undefined
   res.json = (body)->
@@ -23,4 +23,3 @@ module.exports = (req, res, next)->
         name: err.name
     rep.headers = headers if headers?
     res.end JSON.stringify(rep)
-  return next null
