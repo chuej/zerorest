@@ -69,12 +69,12 @@ docker-compose up example
 ### sh scripts
 Service:
 ```sh
-bin/example-service
+./bin/example-service
 ```
 
 Client:
 ```sh
-bin/example-client
+./bin/example-client
 ```
 
 ## Usage
