@@ -2,7 +2,7 @@ service:
   build: "./"
   environment:
     ENV: development
-    DEBUG: "*"
+    DEBUG: zerorest
     HOST: 0.0.0.0
     PORT: 5555
   volumes:
@@ -22,7 +22,7 @@ example:
   build: "./"
   environment:
     ENV: development
-    DEBUG: "*"
+    DEBUG: zerorest
     HOST: service
     PORT: 5555
   volumes:

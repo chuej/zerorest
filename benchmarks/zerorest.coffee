@@ -24,6 +24,7 @@ client.on 'start', ()->
   bench = new Benchmark 'ZMS',
     defer: true
     async: true
+    initCount: 10
     minSamples: 100
     fn: (deferred)->
       client.request '/hello/world', opts, (err, resp)->
