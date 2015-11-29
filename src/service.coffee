@@ -24,10 +24,10 @@ class Service extends EventEmitter
       @conf.broker.heartbeat = opts.broker?.heartbeat
       @conf.broker.lbmode = opts.broker?.lbmode
       @conf.broker.concurrency = opts.broker?.concurrency
-      @conf.worker.heartbeat = opts.worker?.heartbeat
-      @conf.worker.reconnect = opts.worker?.reconnect
-      @conf.worker.concurrency = opts.worker?.concurrency
-      @conf.worker.socketConcurrency = opts.worker?.socketConcurrency
+      @conf.router.heartbeat = opts.router?.heartbeat
+      @conf.router.reconnect = opts.router?.reconnect
+      @conf.router.concurrency = opts.router?.concurrency
+      @conf.router.socketConcurrency = opts.router?.socketConcurrency
     conf =
       url: @url
       heartbeat: @conf.broker.heartbeat

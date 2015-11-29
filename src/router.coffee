@@ -65,7 +65,7 @@ class Router extends EventEmitter
       runAfter = async.applyEachSeries @after
       runLocalAfter = async.applyEachSeries @localAfter
 
-      handleError = (err)=>
+      handleError = (err)->
         runLocalAfter err, req, res, (err)->
           runAfter err, req, res, (err)->
             emitError err

@@ -85,7 +85,22 @@ ZR = require('zerorest');
 
 startService = function() {
   var templates, users, zms;
+  conf = {
+    broker: {
+      concurrency: 5,  // number of concurrent router sockets
+      hearbeat: 2500,
+      lbmode: 'rr' // load-balance mode: round-robin (rr) or random (rand)
+    },
+    router: {
+      concurrency: 5, // number of concurrent dealer sockets per route
+      reconnect: 1000,
+      heartbeat: 2500
+    },
+    url: "tcp://0.0.0.0:5555"
+  };
   zms = new ZR("tcp://0.0.0.0:5555");
+  // or
+  zms = new ZR(conf);
 
 
   zms.use(function(req, res, next) {
@@ -96,7 +111,17 @@ startService = function() {
   // array of middleware
   zms.use([function(req,res,next){ return next(null); }]);
 
+  conf = {
+    concurrency: 5, // number of concurrent dealer sockets per route
+    reconnect: 1000,
+    heartbeat: 2500,
+    path: "/users"
+  };
+
   users = zms.router("/users");
+  // or
+  users = zms.router(conf);
+  
   users.use(function(req, res, next) {
     // users specific middleware
     return next(null);
