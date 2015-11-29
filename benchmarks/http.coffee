@@ -18,7 +18,8 @@ fork = (ID) ->
     done = ->
       d2 = new Date
       hmany = d2.getTime() - d1.getTime()
-      console.log 'CLIENT GOT answer', hmany + ' microseconds. ' + (tp / (hmany / 1000)).toFixed(2) + ' requests/sec.'
+      console.log 'CLIENT GOT answer', hmany + " milliseconds for #{tp} requests. " + (tp / (hmany / 1000)).toFixed(2) + ' requests/sec.'
+      console.log "Milliseconds per request: " + (hmany/tp)
       setTimeout (->
         cluster.worker.kill()
         return
