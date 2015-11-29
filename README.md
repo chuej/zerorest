@@ -91,7 +91,7 @@ startService = function() {
       hearbeat: 2500,
       lbmode: 'rr' // load-balance mode: round-robin (rr) or random (rand)
     },
-    router: {
+    worker: {
       concurrency: 5, // number of concurrent dealer sockets per route
       reconnect: 1000,
       heartbeat: 2500

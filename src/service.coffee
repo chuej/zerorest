@@ -11,7 +11,7 @@ class Service extends EventEmitter
         heartbeat: undefined
         concurrency: undefined
         lbmode: undefined
-      router:
+      worker:
         heartbeat: undefined
         reconnect: undefined
         concurrency: undefined
@@ -24,10 +24,10 @@ class Service extends EventEmitter
       @conf.broker.heartbeat = opts.broker?.heartbeat
       @conf.broker.lbmode = opts.broker?.lbmode
       @conf.broker.concurrency = opts.broker?.concurrency
-      @conf.router.heartbeat = opts.router?.heartbeat
-      @conf.router.reconnect = opts.router?.reconnect
-      @conf.router.concurrency = opts.router?.concurrency
-      @conf.router.socketConcurrency = opts.router?.socketConcurrency
+      @conf.worker.heartbeat = opts.worker?.heartbeat
+      @conf.worker.reconnect = opts.worker?.reconnect
+      @conf.worker.concurrency = opts.worker?.concurrency
+      @conf.worker.socketConcurrency = opts.worker?.socketConcurrency
     conf =
       url: @url
       heartbeat: @conf.broker.heartbeat
@@ -74,10 +74,10 @@ class Service extends EventEmitter
       url: @url
       before: @before.slice(0)  #allow for router-specific middleware
       after: @after
-      concurrency: opts.concurrency or @conf.router.concurrency
-      socketConcurrency: opts.socketConcurrency or @conf.router.socketConcurrency
-      heartbeat: opts.heartbeat or @conf.router.heartbeat
-      reconnect: opts.reconnect or @conf.router.reconnect
+      concurrency: opts.concurrency or @conf.worker.concurrency
+      socketConcurrency: opts.socketConcurrency or @conf.worker.socketConcurrency
+      heartbeat: opts.heartbeat or @conf.worker.heartbeat
+      reconnect: opts.reconnect or @conf.worker.reconnect
     router = new Router opts
     router.on 'error', (err)=>
       @emit 'error', err
