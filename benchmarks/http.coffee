@@ -1,9 +1,6 @@
 http = require('http')
 request = require 'request'
-n = 3000
-resp = ''
-while n -= 1
-
+resp = 'Hello World!'
 cluster = require('cluster')
 async = require('async')
 _ = require('lodash')
