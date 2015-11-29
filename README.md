@@ -241,3 +241,5 @@ npm test
 ## Resources
 - [Why You Should Start Using Microservices](https://blog.risingstack.com/why-you-should-start-using-microservices/)
 - [ZeroMQ instead of HTTP, for internal services | Hacker News](https://news.ycombinator.com/item?id=6086983)
+- [0MQ The Guide | Advanced Request-Reply Patterns](http://zguide.zeromq.org/page:all#toc52)
+- [0MQ The Guide | Reliable Request-Reply Patterns](http://zguide.zeromq.org/page:all#toc86)
