@@ -4,8 +4,9 @@ async = require 'async'
 
 class Worker extends EventEmitter
   constructor: (opts)->
+    console.log opts
     @url = opts.url
-    @concurrency = opts.concurrency or 5
+    @concurrency = opts.concurrency or 1
     @heartbeat = opts.heartbeat or 2500
     @socketConcurrency = opts.socketConcurrency or 100
     @reconnect = opts.reconnect or 1000

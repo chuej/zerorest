@@ -121,7 +121,7 @@ startService = function() {
   users = zms.router("/users");
   // or
   users = zms.router(conf);
-  
+
   users.use(function(req, res, next) {
     // users specific middleware
     return next(null);

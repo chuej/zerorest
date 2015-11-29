@@ -1,6 +1,7 @@
 Client = require('../../src').Client
 host = process.env.HOST or "0.0.0.0"
-client = new Client "tcp://#{process.env.HOST}:#{process.env.PORT}"
+port = process.env.PORT or "5000"
+client = new Client "tcp://#{host}:#{port}"
 
 client.on 'start', ()->
   opts =

@@ -7,7 +7,7 @@ class Broker extends EventEmitter
     @url = opts.url
     @heartbeat = opts.heartbeat or 2500
     @lbmode = opts.lbmode or 'rr'
-    @concurrency = opts.concurrency or 5
+    @concurrency = opts.concurrency or 1
     @num = 0
     i = @concurrency + 1
     @brokers = while i -= 1
