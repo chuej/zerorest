@@ -8,7 +8,7 @@ describe 'worker', ()->
     @initUrl = "tcp://0.0.0.0:5555"
     @broker = new Broker url: @initUrl
     @broker.on 'start', ()=>
-      @concurrency = 10
+      @concurrency = 2
       @heartbeat = 500
       @reconnect = 500
       @socketConcurrency = 500

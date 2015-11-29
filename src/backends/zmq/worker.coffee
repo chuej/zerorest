@@ -4,7 +4,6 @@ async = require 'async'
 
 class Worker extends EventEmitter
   constructor: (opts)->
-    console.log opts
     @url = opts.url
     @concurrency = opts.concurrency or 1
     @heartbeat = opts.heartbeat or 2500

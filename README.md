@@ -1,7 +1,7 @@
 # ZeroREST
 Build microservices with ZeroMQ.
 
-Provides familiar express-style API as an abstraction of 0mq REQ/REP sockets for building REST-like microservices.
+Provides familiar express-style API as an abstraction of 0mq request-reply sockets for building REST-like microservices.
 
 ## Installation
 You will need ZeroMQ installed: [Get ZeroMQ](http://zeromq.org/intro:get-the-software)

@@ -7,7 +7,7 @@ describe 'broker', ()->
     @initUrl = "tcp://*:5555"
     @heartbeat = 5000
     @lbmode = 'rand'
-    @concurrency = 10
+    @concurrency = 2
     opts =
       url: @initUrl
       heartbeat: @heartbeat
