@@ -57,7 +57,7 @@ class Router extends EventEmitter
       if typeof(req) is 'string'
         formattedReq = {}
         formattedReq.body = req if req.length > 0
-        req = formattedBody
+        req = formattedReq
       req.copts = opts
       req.path = worker.fullPath
       @interfaces req, res
