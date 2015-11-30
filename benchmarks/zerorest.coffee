@@ -2,6 +2,7 @@ cluster = require('cluster')
 async = require('async')
 _ = require('lodash')
 cmd = require('commander')
+Router = require '../src/router'
 
 fork = (ID) ->
   if !cmd['nofork'] and ID
@@ -54,16 +55,27 @@ fork = (ID) ->
         return
     else if processID <= cmd.bn + cmd.bn * cmd.wn
       b = processID % cmd.bn + 1
-      worker = new (require("../src/backends/zmq/worker"))(url: "tcp://0.0.0.0:5101", socketConcurrency: 1000, path: 'echo')
-      worker.on 'error', (err) ->
-        console.log 'worker', err
-        return
-      worker.on 'request', (inp, res) ->
-        if cmd.m
-          res.opts.cache = 100000
-        res.end inp
-        return
-      worker.start()
+      router = new Router
+        url : "tcp://0.0.0.0:5101"
+        path: ""
+      router.routes =
+        [
+          path: "echo"
+          cb: (req, res, next)->
+            setImmediate ->
+              res.end req
+        ]
+      router.start()
+      # worker = new (require("../src/backends/zmq/worker"))(url: "tcp://0.0.0.0:5101", socketConcurrency: 1000, path: 'echo')
+      # worker.on 'error', (err) ->
+      #   console.log 'worker', err
+      #   return
+      # worker.on 'request', (inp, res) ->
+      #   if cmd.m
+      #     res.opts.cache = 100000
+      #   res.end inp
+      #   return
+      # worker.start()
       console.log 'WORKER (BROKER ' + b + ')'
     else
       b = processID % cmd.bn + 1
