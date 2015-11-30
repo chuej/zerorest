@@ -7,7 +7,7 @@ describe 'service provider', ()->
     @service = new Service @url
   context 'constructor', ()->
     it 'should set url', ()->
-      assert.equal @url, @service.url
+      assert.equal @url, @service.conf.url
     it 'should create broker', ()->
       assert @service.broker?
   context 'methods', ()->
@@ -33,7 +33,7 @@ describe 'service provider', ()->
       it 'should create new router with @url, @before, and @after', ()->
         assert.equal @router.before.length, @service.before.length
         assert.equal @router.after.length, @service.after.length
-        assert.equal @router.url, @service.url
+        assert.equal @router.url, @service.conf.url
       it 'should push router to @routers', ()->
         assert.equal @service.routers[0], @router
       context 'error', ()->

@@ -3,6 +3,7 @@ Router = require './router'
 Broker = require './backends/zmq/broker'
 async = require 'async'
 debug = require('debug')("zerorest:Service")
+_ = require 'lodash'
 
 class Service extends EventEmitter
   constructor: (opts)->
@@ -11,29 +12,27 @@ class Service extends EventEmitter
         heartbeat: undefined
         concurrency: undefined
         lbmode: undefined
+        noFork: undefined
       worker:
         heartbeat: undefined
         reconnect: undefined
         concurrency: undefined
         socketConcurrency: undefined
-
+        noFork: undefined
+      noFork: undefined
+      url: undefined
     if typeof(opts) is 'string'
-      @url = opts
+      @conf.url = opts
     else
-      @url = opts.url
-      @conf.broker.heartbeat = opts.broker?.heartbeat
-      @conf.broker.lbmode = opts.broker?.lbmode
-      @conf.broker.concurrency = opts.broker?.concurrency
-      @conf.worker.heartbeat = opts.worker?.heartbeat
-      @conf.worker.reconnect = opts.worker?.reconnect
-      @conf.worker.concurrency = opts.worker?.concurrency
-      @conf.worker.socketConcurrency = opts.worker?.socketConcurrency
-    conf =
-      url: @url
-      heartbeat: @conf.broker.heartbeat
-      lbmode: @conf.broker.lbmode
-      concurrency: @conf.broker.concurrency
-    @broker = new Broker conf
+      @conf.url = opts.url
+      @conf.noFork = opts.noFork
+      @conf.broker = _.defaults @conf.broker, opts.broker
+      @conf.worker = _.defaults @conf.worker, opts.worker
+    @conf.broker.url = @conf.url
+    @conf.worker.url = @conf.url
+    @conf.broker.noFork = @conf.noFork if @conf.noFork
+    @conf.worker.noFork = @conf.noFork if @conf.noFork
+    @broker = new Broker @conf.broker
     @broker.on 'start', ()=>
       debug("Broker started.")
       @emit 'BrokerStart'
@@ -48,7 +47,7 @@ class Service extends EventEmitter
       @emit 'BrokerStop'
       async.each @routers, (router, cb)->
         router.stop cb
-      , (err)->
+      , (err)=>
         if err
           @emit 'error', err
         @emit 'stop'
@@ -74,10 +73,7 @@ class Service extends EventEmitter
       url: @url
       before: @before.slice(0)  #allow for router-specific middleware
       after: @after
-      concurrency: opts.concurrency or @conf.worker.concurrency
-      socketConcurrency: opts.socketConcurrency or @conf.worker.socketConcurrency
-      heartbeat: opts.heartbeat or @conf.worker.heartbeat
-      reconnect: opts.reconnect or @conf.worker.reconnect
+    opts = _.defaults opts, @conf.worker
     router = new Router opts
     router.on 'error', (err)=>
       @emit 'error', err
