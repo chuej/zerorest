@@ -16,13 +16,16 @@ describe 'zms client', ()->
         method: 'PATCH'
       copts:
         timeout: 10000
-    @stream = @client.request '/users/update',  @opts
-    @client.request '/users/update', @opts, (err, @resp)=>
-      return done err if err
-      @body = @resp.body
-      @client.request '/users/html', @opts, (err, @htmlResp)=>
-        @client.request '/users/error', @opts, (@err, @errResp)=>
-          return done err
+    @zms.on 'start', ()=>
+      @stream = @client.request '/users/update',  @opts
+      @client.request '/users/update', @opts, (err, @resp)=>
+        console.log "heres"
+        return done err if err
+        @body = @resp.body
+        @client.request '/users/html', @opts, (err, @htmlResp)=>
+          return done err if err
+          @client.request '/users/error', @opts, (@err, @errResp)=>
+            return done err
   context 'callback mode', ()->
     it 'should have resp', ()->
       assert @resp
@@ -60,7 +63,9 @@ startService = ->
   ZMS = require './service'
 
   startProvider = ()->
-    zms = new ZMS(URL)
+    zms = new ZMS
+      url: URL
+      noFork: true
     users = zms.router("/users")
 
     users.route "/update", (req, res, next)->

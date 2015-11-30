@@ -4,7 +4,7 @@ assert = require 'assert'
 describe 'service provider', ()->
   before ()->
     @url = "tcp://127.0.0.1:5555"
-    @service = new Service @url
+    @service = new Service url: @url, noFork: true
   context 'constructor', ()->
     it 'should set url', ()->
       assert.equal @url, @service.conf.url
@@ -49,7 +49,7 @@ describe 'service provider', ()->
       before (done)->
         @service.routers[0].start = ()=>
           @routerStarted = true
-        @service.on 'BrokerStart', ()=>
+        @service.on 'start', ()=>
           @brokerStarted = true
           return done null
         @service.start()
@@ -59,9 +59,10 @@ describe 'service provider', ()->
         assert @routerStarted
     describe 'stop', ()->
       before (done)->
-        @service.routers[0].stop = ()=>
+        @service.routers[0].stop = (cb)=>
           @routerStopped = true
-        @service.on 'BrokerStop', ()=>
+          return cb null
+        @service.on 'stop', ()=>
           @brokerStopped = true
           return done null
         @service.stop()

@@ -18,7 +18,6 @@ describe 'router', ()->
     @workerPath = "/findById"
     @errorPath = "/error"
     @path = "/router"
-    @concurrency = 10
     @heartbeat = 500
     @reconnect = 500
     @socketConcurrency = 500
@@ -27,7 +26,6 @@ describe 'router', ()->
       after: @after
       url: @url
       path: @path
-      concurrency: @concurrency
       socketConcurrency: @socketConcurrency
       heartbeat: @heartbeat
       reconnect: @reconnect
@@ -39,7 +37,6 @@ describe 'router', ()->
       assert.deepEqual @router.after, @after
       assert.equal @router.path, @path
     it 'should set worker options', ()->
-      assert.equal @router.concurrency, @concurrency
       assert.equal @router.heartbeat, @heartbeat
       assert.equal @router.reconnect, @reconnect
       assert.equal @router.socketConcurrency, @socketConcurrency

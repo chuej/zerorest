@@ -5,6 +5,9 @@ cluster = require('cluster')
 async = require('async')
 _ = require('lodash')
 cmd = require('commander')
+host = "127.0.0.1"
+port = "7777"
+
 
 fork = (ID) ->
   if !cmd['nofork'] and ID
@@ -32,7 +35,7 @@ fork = (ID) ->
 
 
       while k < cmd.p
-        request.get "http://#{process.env.HOST}:#{process.env.PORT}", (err, resp, body)->
+        request.get "http://#{host}:#{port}", (err, resp, body)->
           throw err if err
           rcnt++
           prcnt++
@@ -47,21 +50,21 @@ fork = (ID) ->
       return
 
     if processID <= cmd.bn
-      broker = new (require("../src/backends/zmq/broker"))(url: "tcp://0.0.0.0:5101", cache: ! !cmd.m)
-      broker.on 'error', (err) ->
-        console.log 'broker', err
-        return
-      broker.start ->
-        console.log 'BROKER ' + processID
-        return
+      # broker = new (require("../src/backends/zmq/broker"))(url: "tcp://0.0.0.0:5101", cache: ! !cmd.m)
+      # broker.on 'error', (err) ->
+      #   console.log 'broker', err
+      #   return
+      # broker.start ->
+      #   console.log 'BROKER ' + processID
+      #   return
+      return
     else if processID <= cmd.bn + cmd.bn * cmd.wn
       http.createServer((req, res) ->
-        res.writeHead 200, 'Content-Type': 'text/plain'
-        res.end resp
+        setImmediate ->
+          res.writeHead 200, 'Content-Type': 'text/plain'
+          res.end chunk
         return
-      ).listen process.env.PORT, process.env.HOST
-      return
-    else
+      ).listen port, host
       return
 
     sn = 0
@@ -80,8 +83,8 @@ fork = (ID) ->
 cmd.option('--bn <val>', 'Num of Brokers', 1)
 .option('--wn <val>', 'Num of Workers (for each Broker)', 1)
 .option('--cn <val>', 'Num of Clients (for each Broker)', 1)
-.option('--pn <val>', 'Num of Parallel Requests (for each Client)', 1000)
-.option('--p <val>', 'Num of messages (for each Client)', 5000)
+.option('--pn <val>', 'Num of Parallel Requests (for each Client)', 5000)
+.option('--p <val>', 'Num of messages (for each Client)', 10000)
 .option('--m <val>', 'Use memory cache (1=enabled|0=disabled) (default=0)', 0)
 .option('--s <val>', 'Num of waves (default=1)', 1)
 .option('--e <val>', 'Num of waves (default=tcp://127.0.0.1:7777)', 'tcp://127.0.0.1:777')

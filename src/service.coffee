@@ -5,21 +5,21 @@ async = require 'async'
 debug = require('debug')("zerorest:Service")
 _ = require 'lodash'
 
+Cluster = require './cluster'
+
 class Service extends EventEmitter
   constructor: (opts)->
     @conf =
       broker:
         heartbeat: undefined
-        concurrency: undefined
         lbmode: undefined
         noFork: undefined
       worker:
         heartbeat: undefined
         reconnect: undefined
-        concurrency: undefined
         socketConcurrency: undefined
-        noFork: undefined
-      noFork: undefined
+      noFork: opts?.noFork
+
       url: undefined
     if typeof(opts) is 'string'
       @conf.url = opts
@@ -30,21 +30,13 @@ class Service extends EventEmitter
       @conf.worker = _.defaults @conf.worker, opts.worker
     @conf.broker.url = @conf.url
     @conf.worker.url = @conf.url
-    @conf.broker.noFork = @conf.noFork if @conf.noFork
-    @conf.worker.noFork = @conf.noFork if @conf.noFork
+
     @broker = new Broker @conf.broker
     @broker.on 'start', ()=>
       debug("Broker started.")
-      @emit 'BrokerStart'
-      async.each @routers, (router, cb)->
-        router.start cb
-      , (err)->
-        if err
-          @emit 'error', err
-        @emit 'start'
+      @emit 'start'
     @broker.on 'stop', ()=>
       debug "Broker stopped."
-      @emit 'BrokerStop'
       async.each @routers, (router, cb)->
         router.stop cb
       , (err)=>
@@ -81,8 +73,33 @@ class Service extends EventEmitter
     return router
   start: ()->
     debug "Starting..."
-    @broker.start()
+    unless @noFork
+      @broker.on 'start', ()=>
+        async.each @routers, (router, cb)=>
+          router.start()
+          return cb null
+      @broker.start()
+
+    else
+      @routerCluster = []
+      @brokerCluster = Cluster name: "Broker", numWorkers: @conf.broker.concurrency, fn: @broker.start.bind(@broker)
+      @brokerCluster.start()
+      async.each @routers, (router, cb)=>
+        router.routes.forEach (route)=>
+          cluster = Cluster name: route.fullPath, numWorkers: @conf.worker.concurrency, fn: route._worker.start.bind(route._worker)
+          cluster.start()
+          @routerCluster.push cluster
+        # cluster = Cluster name: router.path, numWorkers: @conf.worker.concurrency, fn: router.start.bind(router)
+        # @routerCluster.push cluster
+        # cluster.start()
+        return cb null
   stop: ()->
     debug "Stopping..."
-    @broker.stop()
+    unless @noFork
+      @broker.stop()
+    else
+      @brokerCluster.stop()
+      async.each @routerCluster, (router, cb)->
+        router.stop()
+        return cb null
 module.exports = Service

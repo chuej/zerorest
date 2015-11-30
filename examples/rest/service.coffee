@@ -34,5 +34,8 @@ startProvider = ()->
     res.error err
     #error handler
     #calling next w/ err will trigger default res.error
+  zms.on 'error', (err)->
+    console.log "error!!!!!"
+    throw err
   zms.start()
 startProvider()

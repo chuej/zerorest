@@ -10,6 +10,17 @@ You will need ZeroMQ installed: [Get ZeroMQ](http://zeromq.org/intro:get-the-sof
 npm install zerorest
 ```
 
+## Benchmarks
+### ZeroREST
+- 50k concurrent requests
+- 3491.62 requests/sec
+- Milliseconds per request: 0.2864
+
+### Raw Node.js HTTP
+- 10k concurrent requests
+- 1883.24 requests/sec
+- Milliseconds per request: 0.531
+
 ## Quickstart
 Service:
 ```javascript
@@ -96,6 +107,7 @@ startService = function() {
       reconnect: 1000,
       heartbeat: 2500
     },
+    noFork: false, // by default, zerorest will fork processes for brokers/workers
     url: "tcp://0.0.0.0:5555"
   };
   zms = new ZR("tcp://0.0.0.0:5555");

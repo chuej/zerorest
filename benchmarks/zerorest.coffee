@@ -2,7 +2,9 @@ cluster = require('cluster')
 async = require('async')
 _ = require('lodash')
 cmd = require('commander')
-
+ZMS = require '../src'
+host = "0.0.0.0"
+port = 5101
 fork = (ID) ->
   if !cmd['nofork'] and ID
     return cluster.fork()
@@ -16,7 +18,7 @@ fork = (ID) ->
       console.log "Milliseconds per request: " + (hmany/tp)
       client.stop()
       setTimeout (->
-        cluster.worker.kill()
+        # cluster.worker.kill()
         return
       ), 1000
       return
@@ -45,29 +47,13 @@ fork = (ID) ->
       return
 
     if processID <= cmd.bn
-      broker = new (require("../src/backends/zmq/broker"))(url: "tcp://0.0.0.0:5101", cache: ! !cmd.m)
-      broker.on 'error', (err) ->
-        console.log 'broker', err
-        return
-      broker.start ->
-        console.log 'BROKER ' + processID
-        return
+      return
     else if processID <= cmd.bn + cmd.bn * cmd.wn
       b = processID % cmd.bn + 1
-      worker = new (require("../src/backends/zmq/worker"))(url: "tcp://0.0.0.0:5101", socketConcurrency: 1000, path: 'echo')
-      worker.on 'error', (err) ->
-        console.log 'worker', err
-        return
-      worker.on 'request', (inp, res) ->
-        if cmd.m
-          res.opts.cache = 100000
-        res.end inp
-        return
-      worker.start()
-      console.log 'WORKER (BROKER ' + b + ')'
+      return
     else
       b = processID % cmd.bn + 1
-      client = new (require('pigato').Client)("tcp://0.0.0.0:5101")
+      client = new (ZMS.Client)("tcp://#{host}:#{port}")
       sn = 0
       tp = cmd.p * cmd.s
       console.log 'CLIENT (' + tp + ' reqs/' + cmd.s + ' waves) (BROKER ' + b + ')'
@@ -78,9 +64,9 @@ fork = (ID) ->
         console.log 'disconnected'
         return
       ).on 'error', (err) ->
-        console.log err
+        console.log err.stack
         return
-      client.start()
+      # client.start()
       d1 = undefined
       rcnt = 0
       setTimeout (->
@@ -94,8 +80,8 @@ fork = (ID) ->
 cmd.option('--bn <val>', 'Num of Brokers', 1)
 .option('--wn <val>', 'Num of Workers (for each Broker)', 1)
 .option('--cn <val>', 'Num of Clients (for each Broker)', 1)
-.option('--pn <val>', 'Num of Parallel Requests (for each Client)', 1000)
-.option('--p <val>', 'Num of messages (for each Client)', 10000)
+.option('--pn <val>', 'Num of Parallel Requests (for each Client)', 5000)
+.option('--p <val>', 'Num of messages (for each Client)', 50000)
 .option('--m <val>', 'Use memory cache (1=enabled|0=disabled) (default=0)', 0)
 .option('--s <val>', 'Num of waves (default=1)', 1)
 .option('--e <val>', 'Num of waves (default=tcp://127.0.0.1:7777)', 'tcp://127.0.0.1:777')
@@ -117,6 +103,7 @@ _.each [
   return
 chunk = 'foo'
 if cluster.isMaster
+  cmd.nofork = true
   console.log 'RUNNING CONF'
   console.log '\n', [
     cmd.bn + ' brokers'
