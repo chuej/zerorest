@@ -77,7 +77,15 @@ fork = (ID) ->
     return
   return
 
-cmd.option('--bn <val>', 'Num of Brokers', 1).option('--wn <val>', 'Num of Workers (for each Broker)', 1).option('--cn <val>', 'Num of Clients (for each Broker)', 1).option('--pn <val>', 'Num of Parallel Requests (for each Client)', 1).option('--p <val>', 'Num of messages (for each Client)', 5000).option('--m <val>', 'Use memory cache (1=enabled|0=disabled) (default=0)', 0).option('--s <val>', 'Num of waves (default=1)', 1).option('--e <val>', 'Num of waves (default=tcp://127.0.0.1:7777)', 'tcp://127.0.0.1:777').option '-N, --nofork', 'Don\'t use fork'
+cmd.option('--bn <val>', 'Num of Brokers', 1)
+.option('--wn <val>', 'Num of Workers (for each Broker)', 1)
+.option('--cn <val>', 'Num of Clients (for each Broker)', 1)
+.option('--pn <val>', 'Num of Parallel Requests (for each Client)', 1000)
+.option('--p <val>', 'Num of messages (for each Client)', 5000)
+.option('--m <val>', 'Use memory cache (1=enabled|0=disabled) (default=0)', 0)
+.option('--s <val>', 'Num of waves (default=1)', 1)
+.option('--e <val>', 'Num of waves (default=tcp://127.0.0.1:7777)', 'tcp://127.0.0.1:777')
+.option '-N, --nofork', 'Don\'t use fork'
 cmd.on '--help', ->
   console.log 'Examples:'
   console.log '\nnode ' + cmd.name() + ' --bn 2 --wn 2 --cn 2 --p 50000'
