@@ -19,7 +19,6 @@ describe 'zms client', ()->
     @zms.on 'start', ()=>
       @stream = @client.request '/users/update',  @opts
       @client.request '/users/update', @opts, (err, @resp)=>
-        console.log "heres"
         return done err if err
         @body = @resp.body
         @client.request '/users/html', @opts, (err, @htmlResp)=>
@@ -40,7 +39,7 @@ describe 'zms client', ()->
       it 'should have headers', ()->
         assert @resp.headers
       it 'should have status', ()->
-        assert @resp.status
+        assert @resp.statusCode
   context 'streaming mode', ()->
     before (done)->
       @resp = ''

@@ -23,7 +23,7 @@ describe 'rest adapter', ()->
       @res.setStatus 200
       @res.end = (args)=>
         args = JSON.parse(args)
-        assert.equal args.status, 200
+        assert.equal args.statusCode, 200
         return done null
       @res.json {}
   context 'res.setHeaders', ()->

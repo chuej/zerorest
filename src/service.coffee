@@ -73,7 +73,7 @@ class Service extends EventEmitter
     return router
   start: ()->
     debug "Starting..."
-    if @noFork
+    if @conf.noFork
       @broker.on 'start', ()=>
         async.each @routers, (router, cb)=>
           router.start()
@@ -96,7 +96,7 @@ class Service extends EventEmitter
         return cb null
   stop: ()->
     debug "Stopping..."
-    if @noFork
+    if @conf.noFork
       @broker.stop()
     else
       @brokerCluster.stop()

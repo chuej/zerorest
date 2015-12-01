@@ -32,6 +32,7 @@ fork = (ID) ->
       k = 0
 
       while k < cmd.p
+        # client = new (ZMS.Client)("tcp://#{host}:#{port}")
         client.request('echo', chunk)
         .on 'data', ()->
           return
@@ -105,7 +106,7 @@ cmd.option('--bn <val>', 'Num of Brokers', 1)
 .option('--wn <val>', 'Num of Workers (for each Broker)', 1)
 .option('--cn <val>', 'Num of Clients (for each Broker)', 1)
 .option('--pn <val>', 'Num of Parallel Requests (for each Client)', 5000)
-.option('--p <val>', 'Num of messages (for each Client)', 50000)
+.option('--p <val>', 'Num of messages (for each Client)', 10000)
 .option('--m <val>', 'Use memory cache (1=enabled|0=disabled) (default=0)', 0)
 .option('--s <val>', 'Num of waves (default=1)', 1)
 .option('--e <val>', 'Num of waves (default=tcp://127.0.0.1:7777)', 'tcp://127.0.0.1:777')

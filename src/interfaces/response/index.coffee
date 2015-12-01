@@ -1,10 +1,12 @@
+_ = require 'lodash'
+
 module.exports = (req, res, opts)->
-  status = undefined
+  status = 200
   headers = undefined
   res.json = (body)->
     rep =
       body: body
-    rep.status = status if status
+    rep.statusCode = status if status
     rep.headers = headers if headers
     rep = JSON.stringify(rep)
     res.end rep
@@ -16,7 +18,7 @@ module.exports = (req, res, opts)->
     headers = newHeaders
   res.error = (err)->
     rep =
-      status: 500
+      statusCode: 500
       error:
         stack: err.stack
         message: err.message
