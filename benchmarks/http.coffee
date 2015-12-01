@@ -18,10 +18,10 @@ fork = (ID) ->
     done = ->
       d2 = new Date
       hmany = d2.getTime() - d1.getTime()
-      console.log 'CLIENT GOT answer', hmany + " milliseconds for #{tp} requests. " + (tp / (hmany / 1000)).toFixed(2) + ' requests/sec.'
+      console.log hmany + " milliseconds for #{tp} requests. " + (tp / (hmany / 1000)).toFixed(2) + ' requests/sec.'
       console.log "Milliseconds per request: " + (hmany/tp)
       setTimeout (->
-        cluster.worker.kill()
+        cluster.worker.kill() if cluster.worker
         return
       ), 1000
       return
@@ -66,18 +66,18 @@ fork = (ID) ->
         return
       ).listen port, host
       return
+    else
+      sn = 0
+      tp = cmd.p * cmd.s
 
-    sn = 0
-    tp = cmd.p * cmd.s
-
-    d1 = undefined
-    rcnt = 0
-    setTimeout (->
-      d1 = new Date
-      send()
+      d1 = undefined
+      rcnt = 0
+      setTimeout (->
+        d1 = new Date
+        send()
+        return
+      ), 2000
       return
-    ), 2000
-    return
   return
 
 cmd.option('--bn <val>', 'Num of Brokers', 1)

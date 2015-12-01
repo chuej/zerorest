@@ -5,6 +5,8 @@ cmd = require('commander')
 ZMS = require '../src'
 host = "0.0.0.0"
 port = 5101
+Router = require '../src/router'
+console.log host, port
 fork = (ID) ->
   if !cmd['nofork'] and ID
     return cluster.fork()
@@ -14,11 +16,11 @@ fork = (ID) ->
     done = ->
       d2 = new Date
       hmany = d2.getTime() - d1.getTime()
-      console.log 'CLIENT GOT answer', hmany + " milliseconds for #{tp} requests. " + (tp / (hmany / 1000)).toFixed(2) + ' requests/sec.'
+      console.log hmany + " milliseconds for #{tp} requests. " + (tp / (hmany / 1000)).toFixed(2) + ' requests/sec.'
       console.log "Milliseconds per request: " + (hmany/tp)
       client.stop()
       setTimeout (->
-        # cluster.worker.kill()
+        cluster.worker.kill() if cluster.worker
         return
       ), 1000
       return
@@ -47,9 +49,31 @@ fork = (ID) ->
       return
 
     if processID <= cmd.bn
+      broker = new (require("../src/backends/zmq/broker"))(url: "tcp://#{host}:#{port}")
+      broker.on 'error', (err) ->
+        console.log 'broker', err
+        return
+      broker.start ->
+        console.log 'BROKER ' + processID
       return
     else if processID <= cmd.bn + cmd.bn * cmd.wn
       b = processID % cmd.bn + 1
+      # router = new Router
+      #   url : "tcp://#{host}:#{port}"
+      #   path: ""
+      # router.route "echo",(req, res, next)->
+      #   setImmediate ->
+      #     return res.end req
+      # router.start()
+      worker = new (require("../src/backends/zmq/worker"))(url: "tcp://0.0.0.0:5101", socketConcurrency: 1000, path: 'echo')
+      worker.on 'error', (err) ->
+        console.log 'worker', err
+        return
+      worker.on 'request', (inp, res) ->
+        setImmediate ->
+          res.end inp
+          return
+      worker.start()
       return
     else
       b = processID % cmd.bn + 1
@@ -103,7 +127,7 @@ _.each [
   return
 chunk = 'foo'
 if cluster.isMaster
-  cmd.nofork = true
+  # cmd.nofork = true
   console.log 'RUNNING CONF'
   console.log '\n', [
     cmd.bn + ' brokers'

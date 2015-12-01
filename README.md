@@ -12,14 +12,36 @@ npm install zerorest
 
 ## Benchmarks
 ### ZeroREST
+Milliseconds per request: 0.2591
 - 50k concurrent requests
-- 3491.62 requests/sec
-- Milliseconds per request: 0.2864
+- 3859.51 requests/sec
+- 0.2591 ms/request
 
 ### Raw Node.js HTTP
 - 10k concurrent requests
-- 1883.24 requests/sec
-- Milliseconds per request: 0.531
+- 1247.66 requests/sec
+- 0.8015 ms/request
+
+### See for yourself...
+#### HTTP
+```sh
+./bin/benchmark-http
+```
+OR
+```sh
+docker-compose run --rm service ./bin/benchmark-http
+```
+
+#### ZeroREST
+```sh
+./bin/benchmark-zerorest
+```
+OR
+```sh
+docker-compose run --rm service ./bin/benchmark-zerorest
+```
+
+
 
 ## Quickstart
 Service:
