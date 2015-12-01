@@ -152,7 +152,6 @@ startService = function() {
   zms.use([function(req,res,next){ return next(null); }]);
 
   conf = {
-    concurrency: 5, // number of concurrent dealer sockets per route
     reconnect: 1000,
     heartbeat: 2500,
     path: "/users"
