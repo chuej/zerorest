@@ -13,13 +13,41 @@ npm install zerorest
 ## Benchmarks
 ### ZeroREST
 - 50k concurrent requests
-- 3491.62 requests/sec
-- Milliseconds per request: 0.2864
+- 3859.51 requests/sec
+- 0.2591 ms/request
 
 ### Raw Node.js HTTP
 - 10k concurrent requests
-- 1883.24 requests/sec
-- Milliseconds per request: 0.531
+- 1247.66 requests/sec
+- 0.8015 ms/request
+
+### See for yourself...
+In the repo, you will find some convenient shell scripts for running benchmarks on your local machine.
+
+#### Setup
+```sh
+git clone git@github.com:chuej/zerorest
+cd zerorest
+```
+
+#### ZeroREST
+```sh
+./bin/benchmark-zerorest
+```
+OR
+```sh
+docker-compose run --rm service ./bin/benchmark-zerorest
+```
+
+#### HTTP
+```sh
+./bin/benchmark-http
+```
+OR
+```sh
+docker-compose run --rm service ./bin/benchmark-http
+```
+
 
 ## Quickstart
 Service:
@@ -73,9 +101,9 @@ npm install
 ```
 
 ### Docker / Docker Compose
-The following command will start the example service, the the client.
+The following command will start the example service, then the client.
 ```sh
-docker-compose up example
+docker-compose up
 ```
 ### sh scripts
 Service:
@@ -124,7 +152,6 @@ startService = function() {
   zms.use([function(req,res,next){ return next(null); }]);
 
   conf = {
-    concurrency: 5, // number of concurrent dealer sockets per route
     reconnect: 1000,
     heartbeat: 2500,
     path: "/users"

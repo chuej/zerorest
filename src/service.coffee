@@ -73,7 +73,7 @@ class Service extends EventEmitter
     return router
   start: ()->
     debug "Starting..."
-    unless @noFork
+    if @noFork
       @broker.on 'start', ()=>
         async.each @routers, (router, cb)=>
           router.start()
@@ -81,6 +81,7 @@ class Service extends EventEmitter
       @broker.start()
 
     else
+      debug "Starting cluster......."
       @routerCluster = []
       @brokerCluster = Cluster name: "Broker", numWorkers: @conf.broker.concurrency, fn: @broker.start.bind(@broker)
       @brokerCluster.start()
@@ -95,7 +96,7 @@ class Service extends EventEmitter
         return cb null
   stop: ()->
     debug "Stopping..."
-    unless @noFork
+    if @noFork
       @broker.stop()
     else
       @brokerCluster.stop()
