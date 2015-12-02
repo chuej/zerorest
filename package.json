@@ -1,6 +1,6 @@
 {
   "name": "zerorest",
-  "version": "0.8.3",
+  "version": "0.8.4",
   "private": false,
   "scripts": {
     "test": "./node_modules/.bin/mocha --compilers coffee:coffee-script/register --recursive **/**/*.test.coffee"
@@ -37,7 +37,7 @@
     "coffee-script": "^1.9.3",
     "debug": "2.2.0",
     "lodash": "^3.10.0",
-    "pigato": "0.0.43"
+    "pigato": "0.0.42"
   },
   "devDependencies": {
     "benchmark": "^1.0.0",
