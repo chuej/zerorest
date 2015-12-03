@@ -3,6 +3,7 @@ Worker = require "./backends/zmq/worker"
 async = require 'async'
 RespInterface = require './interfaces/response'
 debug = require('debug')('zerorest:Router')
+_ = require 'lodash'
 
 class Router extends EventEmitter
   constructor: (opts)->
@@ -24,7 +25,11 @@ class Router extends EventEmitter
       @localAfter.push fn
     else
       @before.push fn
-  route: (path, fn)->
+  route: ()->
+    path = arguments[0]
+    args = _.map arguments, (val)->
+      return val
+    fns = _.flatten args[1..]
     fullPath = @path + path
     opts =
       url: @url
@@ -33,7 +38,6 @@ class Router extends EventEmitter
       heartbeat: @heartbeat
       reconnect: @reconnect
     _worker = new Worker opts
-
 
     emitError = (err)=>
       @emit 'error', err
@@ -50,7 +54,7 @@ class Router extends EventEmitter
       runBefore = async.applyEachSeries @before
       runAfter = async.applyEachSeries @after
       runLocalAfter = async.applyEachSeries @localAfter
-
+      fn = async.applyEachSeries fns
       handleError = (err)->
         runLocalAfter err, req, res, (err)->
           runAfter err, req, res, (err)->
@@ -64,7 +68,7 @@ class Router extends EventEmitter
     @routes.push
       fullPath: fullPath
       path: path
-      cb: fn
+      cb: fns
       _worker: _worker
   start: (next)->
     debug("Starting...")

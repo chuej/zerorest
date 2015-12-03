@@ -18,7 +18,7 @@ describe 'service provider', ()->
       @router = @service.router @path
       @afterFn = (err, req, res, next)->
       @service.use @afterFn
-      @service.use [@afterFn]
+      @service.use [@afterFn], @afterFn
     describe 'use', ()->
 
       it 'should push fn to @before', ()->

@@ -50,13 +50,15 @@ class Service extends EventEmitter
     @routers = []
     @
 
-  use: (fn)->
-    if typeof(fn) is 'object'
-      fn.forEach @use.bind(@)
-    else if fn.length > 3
-      @after.push fn
-    else
-      @before.push fn
+  use: ()->
+    args = _.map arguments, (val)->
+      return val
+    fns = _.flatten args
+    fns.forEach (fn)=>
+      if fn.length > 3
+        @after.push fn
+      else
+        @before.push fn
   router: (opts)->
     if typeof(opts) is 'string'
       path = opts

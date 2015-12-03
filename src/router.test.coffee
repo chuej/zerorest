@@ -51,7 +51,7 @@ describe 'router', ()->
       @cb = (req, res, next)->
         res.end req
 
-      @router.route @workerPath, @cb
+      @router.route @workerPath, @cb, [@cb], @cb # test arbitrary num of args
       @router.use @afterFn
       @router.use [@afterFn]
     describe 'use', ()->
@@ -66,8 +66,9 @@ describe 'router', ()->
       it 'should push worker config to @workers', ()->
         assert.equal @router.routes.length, 1
         assert.equal @router.routes[0].path, @workerPath
-        assert.equal @router.routes[0].cb, @cb
-
+        assert.equal @router.routes[0].cb[0], @cb
+        assert.equal @router.routes[0].cb[1], @cb
+        assert.equal @router.routes[0].cb[2], @cb
     describe 'start', ()->
       before (done)->
         @router.on "error", (@err)=>
