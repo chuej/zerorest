@@ -1,7 +1,6 @@
 PiWorker = require('pigato').Worker
 EventEmitter = require('events').EventEmitter
 async = require 'async'
-Cluster = require '../../cluster'
 
 class Worker extends EventEmitter
   constructor: (opts)->

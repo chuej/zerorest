@@ -5,7 +5,7 @@ async = require 'async'
 debug = require('debug')("zerorest:Service")
 _ = require 'lodash'
 
-Cluster = require './cluster'
+Cluster = require 'cluster-fn'
 
 class Service extends EventEmitter
   constructor: (opts)->

@@ -1,7 +1,7 @@
 PiBroker = require('pigato').Broker
 EventEmitter = require('events').EventEmitter
 async = require 'async'
-Cluster = require '../../cluster'
+
 class Broker extends EventEmitter
   constructor: (opts)->
     @url = opts.url
