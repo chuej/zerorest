@@ -20,6 +20,8 @@ class Client extends EventEmitter
     res = client.request path, args, copts
     if next?
       resBody = ''
+      res.on 'error', (err)->
+        return next err
       res.on 'data', (data)->
         resBody += data
         return
