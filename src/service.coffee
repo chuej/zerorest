@@ -14,6 +14,7 @@ class Service extends EventEmitter
         heartbeat: undefined
         lbmode: undefined
         noFork: undefined
+        url: undefined
       worker:
         heartbeat: undefined
         reconnect: undefined
@@ -28,8 +29,8 @@ class Service extends EventEmitter
       @conf.noFork = opts.noFork
       @conf.broker = _.defaults @conf.broker, opts.broker
       @conf.worker = _.defaults @conf.worker, opts.worker
-    @conf.broker.url = @conf.url
-    @conf.worker.url = @conf.url
+    @conf.broker.url = @conf.broker.url or @conf.url
+    @conf.worker.url = @conf.worker.url or @conf.url
 
     @broker = new Broker @conf.broker
     @broker.on 'start', ()=>

@@ -3,8 +3,10 @@ host = process.env.HOST or "0.0.0.0"
 port = process.env.PORT or "5000"
 
 startProvider = ()->
-  zms = new ZMS("tcp://#{host}:#{port}")
-
+  zms = new ZMS
+    url: "tcp://#{host}:#{port}"
+    broker:
+      url: "tcp://*:#{port}"
   zms.use (req, res, next)->
     #middleware
     return next null
@@ -38,4 +40,5 @@ startProvider = ()->
     console.log "error!!!!!"
     throw err
   zms.start()
+  console.log "starting...."
 startProvider()
