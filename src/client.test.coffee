@@ -25,6 +25,7 @@ describe 'zms client', ()->
           return done err if err
           @client.request '/users/error', @opts, (@err, @errResp)=>
             return done err
+    @client.start()
   context 'callback mode', ()->
     it 'should have resp', ()->
       assert @resp

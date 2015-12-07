@@ -7,11 +7,15 @@ class Client extends EventEmitter
     conf =
       onConnect: ()=>
         @emit 'start'
+      onDisconnect: ()=>
+        @emit 'stop'
     @client = new PiClient @url, conf
-    @client.start()
+
     @client.on 'error', (err)=>
       @emit 'error', err
     @
+  start: ()->
+    @client.start()
   request: (path, args, next)->
     client = @client
     copts = args.copts
