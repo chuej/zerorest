@@ -103,8 +103,6 @@ class Service extends EventEmitter
       else
         execArray = @execArray()
         id = cluster.worker.id - 1
-        # console.log execArray
-        console.log id
         worker = execArray[id]
 
         worker.start()
