@@ -4,8 +4,7 @@ Broker = require './backends/zmq/broker'
 async = require 'async'
 debug = require('debug')("zerorest:Service")
 _ = require 'lodash'
-
-Cluster = require 'cluster-fn'
+cluster = require 'cluster'
 
 class Service extends EventEmitter
   constructor: (opts)->
@@ -15,10 +14,12 @@ class Service extends EventEmitter
         lbmode: undefined
         noFork: undefined
         url: undefined
+        concurrency: 1
       worker:
         heartbeat: undefined
         reconnect: undefined
         socketConcurrency: undefined
+        concurrency: 1
       noFork: opts?.noFork
 
       url: undefined
@@ -74,6 +75,15 @@ class Service extends EventEmitter
       @emit 'error', err
     @routers.push router
     return router
+  execArray: ()->
+    arr = []
+    i = @conf.broker.concurrency + 1
+    while i -= 1
+      arr.push @broker
+    @routers.forEach (router)->
+      router.routes.forEach (route)->
+        arr.push route._worker
+    return arr
   start: ()->
     debug "Starting..."
     if @conf.noFork
@@ -84,19 +94,20 @@ class Service extends EventEmitter
       @broker.start()
 
     else
-      debug "Starting cluster......."
-      @routerCluster = []
-      @brokerCluster = Cluster name: "Broker", numWorkers: @conf.broker.concurrency, fn: @broker.start.bind(@broker)
-      @brokerCluster.start()
-      async.each @routers, (router, cb)=>
-        router.routes.forEach (route)=>
-          cluster = Cluster name: route.fullPath, numWorkers: @conf.worker.concurrency, fn: route._worker.start.bind(route._worker)
-          cluster.start()
-          @routerCluster.push cluster
-        # cluster = Cluster name: router.path, numWorkers: @conf.worker.concurrency, fn: router.start.bind(router)
-        # @routerCluster.push cluster
-        # cluster.start()
-        return cb null
+      if cluster.isMaster
+        debug "Starting cluster......."
+        i = @conf.broker.concurrency + 1
+        execArray = @execArray()
+        execArray.forEach (exec)->
+          cluster.fork()
+      else
+        execArray = @execArray()
+        id = cluster.worker.id - 1
+        # console.log execArray
+        console.log id
+        worker = execArray[id]
+
+        worker.start()
   stop: ()->
     debug "Stopping..."
     if @conf.noFork

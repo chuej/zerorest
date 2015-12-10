@@ -1,5 +1,6 @@
 PiWorker = require('pigato').Worker
 EventEmitter = require('events').EventEmitter
+debug = require('debug')('zerorest:Worker')
 async = require 'async'
 
 class Worker extends EventEmitter
@@ -22,6 +23,7 @@ class Worker extends EventEmitter
     @
 
   start: ()->
+    debug "[#{@path}] starting..."
     @worker.on 'request', (inp, rep, copts)=>
       @emit 'request', inp, rep, copts
     @worker.on 'error', (err)=>
