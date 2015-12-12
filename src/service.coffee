@@ -109,7 +109,8 @@ class Service extends EventEmitter
       @broker.start()
       execArray = @execArray()
       execArray.forEach (exec)->
-        exec()
+        return exec() unless _.isArray(exec)
+        async.parallel exec
     else
       if cluster.isMaster
         debug "Starting cluster......."
@@ -117,12 +118,11 @@ class Service extends EventEmitter
         execArray = @execArray()
         execArray.forEach (exec)->
           cluster.fork()
-        @cleanup()
       else
         execArray = @execArray()
         id = cluster.worker.id - 1
         worker = execArray[id]
-        console.log "worker::::::::", worker
+        return worker() unless _.isArray(worker)
         async.parallel worker
   cleanup: ()->
     delete @routers
