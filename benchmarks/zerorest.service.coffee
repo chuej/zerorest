@@ -8,6 +8,6 @@ users = zms.router("")
 users.route "echo", (req, res, next)->
   setImmediate ->
     res.end req
-zms.start()
 zms.on 'error',(err)->
   console.error err
+zms.start()

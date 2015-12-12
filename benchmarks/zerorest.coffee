@@ -33,7 +33,7 @@ fork = (ID) ->
 
       while k < cmd.p
         # client = new (ZMS.Client)("tcp://#{host}:#{port}")
-        client.request('echo', chunk)
+        client.request('echo', body: chunk)
         .on 'data', ()->
           return
         .on 'end', ->
@@ -50,12 +50,22 @@ fork = (ID) ->
       return
 
     if processID <= cmd.bn
-      broker = new (require("../src/backends/zmq/broker"))(url: "tcp://#{host}:#{port}")
-      broker.on 'error', (err) ->
-        console.log 'broker', err
-        return
-      broker.start ->
-        console.log 'BROKER ' + processID
+      zms = new ZMS(url:"tcp://#{host}:#{port}", noFork: true)
+
+      users = zms.router("")
+      users.route "echo", (req, res, next)->
+        setImmediate ->
+          res.end req
+      zms.on 'error',(err)->
+        console.error err
+      zms.start()
+      #
+      # broker = new (require("../src/backends/zmq/broker"))(url: "tcp://#{host}:#{port}")
+      # broker.on 'error', (err) ->
+      #   console.log 'broker', err
+      #   return
+      # broker.start ->
+      #   console.log 'BROKER ' + processID
       return
     else if processID <= cmd.bn + cmd.bn * cmd.wn
       b = processID % cmd.bn + 1
@@ -66,15 +76,15 @@ fork = (ID) ->
       #   setImmediate ->
       #     return res.end req
       # router.start()
-      worker = new (require("../src/backends/zmq/worker"))(url: "tcp://0.0.0.0:5101", socketConcurrency: 1000, path: 'echo')
-      worker.on 'error', (err) ->
-        console.log 'worker', err
-        return
-      worker.on 'request', (inp, res) ->
-        setImmediate ->
-          res.end inp
-          return
-      worker.start()
+      # worker = new (require("../src/backends/zmq/worker"))(url: "tcp://0.0.0.0:5101", socketConcurrency: 1000, path: 'echo')
+      # worker.on 'error', (err) ->
+      #   console.log 'worker', err
+      #   return
+      # worker.on 'request', (inp, res) ->
+      #   setImmediate ->
+      #     res.end inp
+      #     return
+      # worker.start()
       return
     else
       b = processID % cmd.bn + 1
@@ -106,7 +116,7 @@ cmd.option('--bn <val>', 'Num of Brokers', 1)
 .option('--wn <val>', 'Num of Workers (for each Broker)', 1)
 .option('--cn <val>', 'Num of Clients (for each Broker)', 1)
 .option('--pn <val>', 'Num of Parallel Requests (for each Client)', 5000)
-.option('--p <val>', 'Num of messages (for each Client)', 10000)
+.option('--p <val>', 'Num of messages (for each Client)', 1)
 .option('--m <val>', 'Use memory cache (1=enabled|0=disabled) (default=0)', 0)
 .option('--s <val>', 'Num of waves (default=1)', 1)
 .option('--e <val>', 'Num of waves (default=tcp://127.0.0.1:7777)', 'tcp://127.0.0.1:777')

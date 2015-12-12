@@ -18,6 +18,8 @@ service:
     - 172.17.42.1
     - 8.8.4.4
     - 8.8.8.8
+  cpu_shares: 512
+  mem_limit: 100m
 example:
   build: "./"
   environment:
