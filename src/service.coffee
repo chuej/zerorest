@@ -124,18 +124,16 @@ class Service extends EventEmitter
         worker = execArray[id]
         return worker() unless _.isArray(worker)
         async.parallel worker
+    @cleanup()
   cleanup: ()->
     delete @routers
     delete @before
     delete @after
-
+    delete @router
+    delete @execArray
   stop: ()->
     debug "Stopping..."
-    if @conf.noFork
-      @broker.stop()
-    else
-      @brokerCluster.stop()
-      async.each @routerCluster, (router, cb)->
-        router.stop()
-        return cb null
+    @broker.stop()
+
+    cluster.disconnect() unless @conf.noFork
 module.exports = Service
