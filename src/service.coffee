@@ -21,24 +21,21 @@ class Service extends EventEmitter
         socketConcurrency: undefined
         concurrency: 1
       noFork: opts?.noFork
-
+      maxProcs: 8
       url: undefined
     if typeof(opts) is 'string'
       @conf.url = opts
     else
-      @conf.url = opts.url
-      @conf.noFork = opts.noFork
-      @conf.broker = _.defaults @conf.broker, opts.broker
-      @conf.worker = _.defaults @conf.worker, opts.worker
+      @conf = _.defaults @conf, opts
+      # @conf.broker = _.defaults @conf.broker, opts.broker
+      # @conf.worker = _.defaults @conf.worker, opts.worker
     @conf.broker.url = @conf.broker.url or @conf.url
     @conf.worker.url = @conf.worker.url or @conf.url
 
     @broker = new Broker @conf.broker
     @broker.on 'start', ()=>
-      debug("Broker started: #{@conf.broker.url or @conf.url}")
       @emit 'start'
     @broker.on 'stop', ()=>
-      debug "Broker stopped."
       async.each @routers, (router, cb)->
         router.stop cb
       , (err)=>
@@ -75,37 +72,63 @@ class Service extends EventEmitter
       @emit 'error', err
     @routers.push router
     return router
+
   execArray: ()->
     arr = []
-    i = @conf.broker.concurrency + 1
+    i = @conf.broker.concurrency
     while i -= 1
-      arr.push @broker
+      arr.push @broker.start.bind(@)
+    max = @conf.maxProcs - 1
+
     @routers.forEach (router)->
       router.routes.forEach (route)->
-        arr.push route._worker
-    return arr
+        arr.push route._worker.start.bind(route._worker)
+    return arr if @conf.noFork
+    return arr if max >= arr.length
+
+    remainder = arr.length % max
+    numPer = arr.length / 2
+    distArr = []
+    fns = []
+    i = 1
+
+    arr[...(arr.length-remainder)].forEach (worker)->
+      fns.push worker
+      if i++ is (numPer)
+        distArr.push fns
+        fns = []
+        i = 1
+      arr.shift()
+    distArr.push arr unless arr.length is 0
+
+    return distArr
+
   start: ()->
     debug "Starting..."
     if @conf.noFork
-      @broker.on 'start', ()=>
-        async.each @routers, (router, cb)=>
-          router.start()
-          return cb null
       @broker.start()
-
+      execArray = @execArray()
+      execArray.forEach (exec)->
+        exec()
     else
       if cluster.isMaster
         debug "Starting cluster......."
-        i = @conf.broker.concurrency + 1
+        @broker.start()
         execArray = @execArray()
         execArray.forEach (exec)->
           cluster.fork()
+        @cleanup()
       else
         execArray = @execArray()
         id = cluster.worker.id - 1
         worker = execArray[id]
+        console.log "worker::::::::", worker
+        async.parallel worker
+  cleanup: ()->
+    delete @routers
+    delete @before
+    delete @after
 
-        worker.start()
   stop: ()->
     debug "Stopping..."
     if @conf.noFork

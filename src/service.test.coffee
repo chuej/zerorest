@@ -47,16 +47,16 @@ describe 'service provider', ()->
           assert @serviceErrorEmitted
     describe 'start', ()->
       before (done)->
-        @service.routers[0].start = ()=>
-          @routerStarted = true
+        # @service.routers[0].routes[0]._worker.start = ()=>
+        #   @workerStarted = true
         @service.on 'start', ()=>
           @brokerStarted = true
           return done null
         @service.start()
       it 'should start broker', ()->
         assert @brokerStarted
-      it 'should start routers', ()->
-        assert @routerStarted
+      # it 'should start workers', ()->
+      #   assert @workerStarted
     describe 'stop', ()->
       before (done)->
         @service.routers[0].stop = (cb)=>

@@ -2,6 +2,7 @@ PiBroker = require('pigato').Broker
 EventEmitter = require('events').EventEmitter
 async = require 'async'
 
+debug = require('debug')('zerorest:Broker')
 class Broker extends EventEmitter
   constructor: (opts)->
     @url = opts.url
@@ -12,8 +13,10 @@ class Broker extends EventEmitter
     conf =
       onStart: ()=>
         @emit 'start'
+        debug("[#{@url}] started.")
       onStop: ()=>
         @emit 'stop'
+        debug("[#{@url}] stopped.")
       heartbeat: @heartbeat
       dmode: if @lbmode is 'rr' then 'load' else 'rand'
     @broker = new PiBroker @url, conf
@@ -21,6 +24,7 @@ class Broker extends EventEmitter
   start: ()->
     @broker.on 'error', (err)=>
       @emit 'error', err
+      debug("[#{@url}] ERROR: #{err.message}\n #{err.stack}")
     @broker.start()
   stop: ()->
     @broker.stop()

@@ -28,6 +28,8 @@ users.route "/update", (req, res, next)->
   res.json
     user: user
     req: req
+users.route "/", (req, res, next)->
+  
 templates = zms.router("/templates")
 templates.route "/html", (req, res, next)->
   res.send "<html></html>"
