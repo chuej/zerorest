@@ -23,11 +23,14 @@ class Worker extends EventEmitter
     @
 
   start: ()->
-    debug "[#{@path}] starting..."
+    name = "[#{@url}/#{@path}]"
+    debug "#{name} starting..."
     @worker.on 'request', (inp, rep, copts)=>
       @emit 'request', inp, rep, copts
+      debug "#{name} received request"
     @worker.on 'error', (err)=>
       @emit 'error', err
+      debug "#{name} ERROR: #{err.msg}\n #{err.stack}"
     @worker.start()
     return
   stop: (next)->

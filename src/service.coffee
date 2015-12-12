@@ -35,7 +35,7 @@ class Service extends EventEmitter
 
     @broker = new Broker @conf.broker
     @broker.on 'start', ()=>
-      debug("Broker started.")
+      debug("Broker started: #{@conf.broker.url or @conf.url}")
       @emit 'start'
     @broker.on 'stop', ()=>
       debug "Broker stopped."

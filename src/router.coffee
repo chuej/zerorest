@@ -53,7 +53,13 @@ class Router extends EventEmitter
       @interfaces req, res
       runBefore = async.applyEachSeries @before
       runAfter = async.applyEachSeries @after
-      runLocalAfter = async.applyEachSeries @localAfter
+      if @localAfter.length < 1
+
+        runLocalAfter = (err, req, res, next)->
+          return next err
+      else
+        runLocalAfter = async.applyEachSeries @localAfter
+
       fn = async.applyEachSeries fns
       handleError = (err)->
         runLocalAfter err, req, res, (err)->
